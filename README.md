@@ -1,99 +1,72 @@
-# Travel Memory App — The Master Build (Phase 0)
+# Phase 1: WSL, Git, & Frontend Basics
 
-Welcome to the definitive, complete architecture of the Travel Memory App! This branch (`main`) contains the fully solved, fully implemented Full-Stack application.
+Welcome to Phase 1 of the Travel Memory App curriculum! In this phase, you are focusing solely on the **Frontend React Single Page Application (SPA)**. The backend logic has been temporarily stripped—you will build that in Phase 2.
 
-## Architecture Overview
-This application demonstrates a production-grade architecture scaled down for local development:
-- **Frontend:** React SPA built with Vite.
-- **Backend API:** Node.js & Express REST API.
-- **Primary Database:** MongoDB (Document Store).
-- **Cache:** Redis (In-memory Key-Value Store).
-- **Object Storage:** MinIO (Local S3-compatible storage for image files).
-- **Message Broker:** RabbitMQ.
-- **Background Worker:** A Node.js worker service that processes messages out-of-band.
+## 🛠️ The Ultimate Goal
+Your job is to fix the entirely broken `frontend/src/App.jsx` file. We have stripped out all the React `useState` hooks, the authentication form handlers, and the `axios` fetch calls.
 
----
+However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the extensive `// TODO:` comments inside `App.jsx` to rebuild the frontend flow.
 
-## 🚀 Getting Started
+## 💻 Prerequisites & Environment Setup
+If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
 
-To run this complete architecture on your local machine, follow these exact steps.
-
-### Prerequisites
-1. **Windows Subsystem for Linux (WSL)** installed.
-2. **Docker Desktop** installed and integrated with your WSL distribution.
-3. **Node.js** installed within your Ubuntu/WSL environment (v18+ recommended).
-
-### 1. Spin up the Infrastructure
-This project relies on four separate background services. We use Docker Compose to spin them all up instantly without needing to install the software directly on your machine.
-
-Open an Ubuntu terminal in this project root and run:
-```bash
-docker compose up -d
+### 1. Install WSL (Windows 11)
+Open **PowerShell as an Administrator** and run:
+```powershell
+wsl --install
 ```
-*Note: This will download and start MongoDB, Redis, RabbitMQ, and MinIO. It also automatically creates the `learning-uploads` bucket with a public read policy so images can be viewed.*
+Restart your computer. Upon reboot, an Ubuntu terminal will open. Create your UNIX username and password.
 
-### 2. Install Dependencies
-You need to install npm packages for both the backend and the frontend.
+### 2. Docker Desktop
+1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
+2. In Docker Settings -> Resources -> WSL Integration, ensure integration is enabled for your default WSL distro (`Ubuntu`).
 
-**Install Backend Dependencies:**
-```bash
-cd backend
-npm install
+### 3. VS Code Setup
+1. Open VS Code in Windows.
+2. Install the **WSL extension** by Microsoft.
+3. Open your project folder using the bottom left green `><` button -> "Reopen in WSL".
+
+## 📚 The Lesson Concepts
+
+### 1. React Single Page Applications (SPAs)
+Unlike traditional websites that reload the entire browser page when you click a link, **SPAs** use JavaScript to manipulate the DOM (Document Object Model) instantly. React achieves this using a **Virtual DOM**, making state changes incredibly fast without annoying page refreshes.
+
+### 2. Form Control with `useState`
+In React, forms should be "Controlled Components". This means the data in the form is directly tied to a React state variable (`useState`), rather than relying on the HTML `<input>` elements holding their own invisible state.
+- [React Documentation on `useState`](https://react.dev/reference/react/useState)
+- [React Documentation on Form Elements](https://react.dev/reference/react-dom/components/input)
+
+### 3. Session Management with JWTs
+When a user logs in, the backend sends a **JSON Web Token (JWT)**. To keep the user logged in even if they refresh the page, we need to save this token locally in the browser. 
+We use the native `localStorage` API to acheive this:
+```javascript
+localStorage.setItem('token', 'eyJhbGciOi...');
+const savedToken = localStorage.getItem('token');
 ```
+You will configure Axios to automatically attach this token to every outgoing `fetch` request using interceptors.
 
-**Install Frontend Dependencies:**
+### 4. Making API Calls
+You'll use `axios` (or standard `fetch`) to communicate with the REST API. When making HTTP `POST` requests, you'll pass dynamic JavaScript objects. When dealing with Files (like uploading images), you'll need to wrap them in a native `FormData` object.
+- [MDN Fetch API Reference](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [MDN FormData Reference](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
+
+## 🧪 Test-Driven Development (TDD)
+We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
+
+Your assignment is to write code in `App.jsx` until all tests pass!
+
+### How to Run Your Assignment:
 ```bash
-cd ../frontend
-npm install
-```
-
-### 3. Start the Backend Services
-The backend consists of two running processes: the API Server and the Background Worker.
-
-Open a new terminal, navigate to the `backend/` directory, and start the API server:
-```bash
-cd backend
-npm run dev
-```
-
-Open *another* new terminal, navigate to the `backend/` directory, and start the RabbitMQ worker:
-```bash
-cd backend
-npm run worker
-```
-
-### 4. Start the Frontend Application
-Open a final terminal, navigate to the `frontend/` directory, and start the React app:
-```bash
+# Move into the frontend directory
 cd frontend
-npm run dev
+
+# Install the dependencies
+npm install
+
+# Run the TDD Watcher
+npm run test:watch
 ```
 
-### 5. View the App!
-Navigate to `http://localhost:5173/` in your browser. 
-You can now select an image, upload it, and watch the Full-Stack magic happen!
-1. The frontend sends the image to the backend via POST `/api/images/upload`.
-2. The backend uploads the file stream directly to MinIO.
-3. The backend saves the MinIO URL to MongoDB.
-4. The backend fires a "process-image" message to RabbitMQ.
-5. The backend immediately responds `201 Created` to the frontend.
-6. The frontend fetches the updated gallery grid from the backend (which reads from MongoDB/Redis).
-7. In the background, the Worker consumes the RabbitMQ message and finalizes the processing.
+Keep your terminal open. Every time you save `App.jsx`, Vitest will instantly re-run the tests. Read the failing error messages closely—they tell you exactly what is missing!
 
----
-
-## 🧪 Testing
-The backend contains a comprehensive Jest test suite using `mongodb-memory-server` and mocked AWS/AMQP interfaces to ensure you can run tests rapidly cleanly without needing the Docker infrastructure running.
-
-To verify the backend:
-```bash
-cd backend
-npm test
-```
-
-## 🔐 Authentication
-This architecture includes full **JWT (JSON Web Token)** Authentication. 
-Before you can upload or view images, you must register a user account.
-1. Open the React frontend (`http://localhost:5173/`).
-2. Click **Register here** to create an account (e.g., `testuser` / `test@example.com` / `password123`).
-3. Your JWT token will be stored securely in localStorage, and the upload gallery flow will unlock automatically!
+Good luck!
