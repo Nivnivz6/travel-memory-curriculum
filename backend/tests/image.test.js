@@ -39,20 +39,25 @@ afterAll(async () => {
 
 describe('Image Endpoints', () => {
   let testUser;
+  let token;
 
   beforeEach(async () => {
     // Create a test user for image uploads
     testUser = await User.create({
       username: 'imageuser',
       email: 'imageuser@example.com',
+      password: 'testpassword123',
     });
+
+    const jwt = require('jsonwebtoken');
+    token = jwt.sign({ id: testUser._id }, process.env.JWT_SECRET || 'fallback_secret');
   });
 
   describe('POST /api/images/upload', () => {
     it('should upload an image and return 201', async () => {
       const res = await request(app)
         .post('/api/images/upload')
-        .field('userId', testUser._id.toString())
+        .set('Authorization', `Bearer ${token}`)
         .attach('image', Buffer.from('fake-image-data'), 'test-image.jpg');
 
       expect(res.status).toBe(201);
@@ -69,7 +74,7 @@ describe('Image Endpoints', () => {
     it('should call S3 upload when uploading an image', async () => {
       await request(app)
         .post('/api/images/upload')
-        .field('userId', testUser._id.toString())
+        .set('Authorization', `Bearer ${token}`)
         .attach('image', Buffer.from('fake-image-data'), 'test-image.jpg');
 
       expect(mockUpload).toHaveBeenCalled();
@@ -85,7 +90,7 @@ describe('Image Endpoints', () => {
 
       await request(app)
         .post('/api/images/upload')
-        .field('userId', testUser._id.toString())
+        .set('Authorization', `Bearer ${token}`)
         .attach('image', Buffer.from('fake-image-data'), 'test-image.jpg');
 
       expect(mockChannel.assertQueue).toHaveBeenCalledWith('image-processing', {
@@ -104,16 +109,7 @@ describe('Image Endpoints', () => {
     it('should return 400 when no file is uploaded', async () => {
       const res = await request(app)
         .post('/api/images/upload')
-        .field('userId', testUser._id.toString());
-
-      expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error');
-    });
-
-    it('should return 400 when userId is missing', async () => {
-      const res = await request(app)
-        .post('/api/images/upload')
-        .attach('image', Buffer.from('fake-image-data'), 'test-image.jpg');
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty('error');
@@ -132,7 +128,9 @@ describe('Image Endpoints', () => {
         status: 'pending',
       });
 
-      const res = await request(app).get('/api/images');
+      const res = await request(app)
+        .get('/api/images')
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
@@ -141,7 +139,9 @@ describe('Image Endpoints', () => {
     });
 
     it('should return empty array when no images exist', async () => {
-      const res = await request(app).get('/api/images');
+      const res = await request(app)
+        .get('/api/images')
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
@@ -160,7 +160,9 @@ describe('Image Endpoints', () => {
         status: 'processed',
       });
 
-      const res = await request(app).get(`/api/images/${image._id}`);
+      const res = await request(app)
+        .get(`/api/images/${image._id}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(200);
       expect(res.body.filename).toBe('test.jpg');
@@ -169,14 +171,18 @@ describe('Image Endpoints', () => {
 
     it('should return 404 for non-existent image', async () => {
       const fakeId = new mongoose.Types.ObjectId();
-      const res = await request(app).get(`/api/images/${fakeId}`);
+      const res = await request(app)
+        .get(`/api/images/${fakeId}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
     });
 
     it('should return 404 for invalid ObjectId', async () => {
-      const res = await request(app).get('/api/images/invalidid123');
+      const res = await request(app)
+        .get('/api/images/invalidid123')
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');

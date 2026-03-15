@@ -27,7 +27,7 @@ describe('User Endpoints', () => {
     it('should create a new user and return 201', async () => {
       const res = await request(app)
         .post('/api/users')
-        .send({ username: 'testuser', email: 'test@example.com' });
+        .send({ username: 'testuser', email: 'test@example.com', password: 'testpassword' });
 
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('_id');
@@ -38,7 +38,7 @@ describe('User Endpoints', () => {
     it('should return 400 when username is missing', async () => {
       const res = await request(app)
         .post('/api/users')
-        .send({ email: 'test@example.com' });
+        .send({ email: 'test@example.com', password: 'testpassword' });
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty('error');
@@ -47,7 +47,7 @@ describe('User Endpoints', () => {
     it('should return 400 when email is missing', async () => {
       const res = await request(app)
         .post('/api/users')
-        .send({ username: 'testuser' });
+        .send({ username: 'testuser', password: 'testpassword' });
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty('error');
@@ -56,11 +56,11 @@ describe('User Endpoints', () => {
     it('should return 400 for duplicate username', async () => {
       await request(app)
         .post('/api/users')
-        .send({ username: 'testuser', email: 'test1@example.com' });
+        .send({ username: 'testuser', email: 'test1@example.com', password: 'testpassword' });
 
       const res = await request(app)
         .post('/api/users')
-        .send({ username: 'testuser', email: 'test2@example.com' });
+        .send({ username: 'testuser', email: 'test2@example.com', password: 'testpassword' });
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty('error');
@@ -71,7 +71,7 @@ describe('User Endpoints', () => {
     it('should return a user by ID', async () => {
       const createRes = await request(app)
         .post('/api/users')
-        .send({ username: 'testuser', email: 'test@example.com' });
+        .send({ username: 'testuser', email: 'test@example.com', password: 'testpassword' });
 
       const res = await request(app).get(`/api/users/${createRes.body._id}`);
 

@@ -4,15 +4,15 @@ const User = require('../models/User');
 // @route   POST /api/users
 const createUser = async (req, res, next) => {
   try {
-    const { username, email } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!username || !email) {
-      const error = new Error('Please provide username and email');
+    if (!username || !email || !password) {
+      const error = new Error('Please provide username, email, and password');
       error.statusCode = 400;
       throw error;
     }
 
-    const user = await User.create({ username, email });
+    const user = await User.create({ username, email, password });
 
     res.status(201).json(user);
   } catch (err) {

@@ -36,12 +36,17 @@ afterAll(async () => {
 
 describe('Redis Cache Middleware', () => {
   let testUser;
+  let token;
 
   beforeEach(async () => {
     testUser = await User.create({
       username: 'cacheuser',
       email: 'cache@example.com',
+      password: 'testpassword',
     });
+
+    const jwt = require('jsonwebtoken');
+    token = jwt.sign({ id: testUser._id }, process.env.JWT_SECRET || 'fallback_secret');
 
     await Image.create({
       userId: testUser._id,
@@ -56,7 +61,9 @@ describe('Redis Cache Middleware', () => {
     // Redis get returns null (cache miss)
     MockIoRedis.mockRedis.get.mockResolvedValueOnce(null);
 
-    const res = await request(app).get('/api/images');
+    const res = await request(app)
+      .get('/api/images')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -86,7 +93,9 @@ describe('Redis Cache Middleware', () => {
       JSON.stringify(cachedData)
     );
 
-    const res = await request(app).get('/api/images');
+    const res = await request(app)
+      .get('/api/images')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(1);

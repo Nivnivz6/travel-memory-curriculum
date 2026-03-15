@@ -12,11 +12,11 @@ const uploadImage = async (req, res, next) => {
       throw error;
     }
 
-    const { userId } = req.body;
+    const userId = req.user._id;
 
     if (!userId) {
-      const error = new Error('Please provide a userId');
-      error.statusCode = 400;
+      const error = new Error('User not authenticated');
+      error.statusCode = 401;
       throw error;
     }
 

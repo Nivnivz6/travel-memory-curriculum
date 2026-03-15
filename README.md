@@ -90,3 +90,10 @@ To verify the backend:
 cd backend
 npm test
 ```
+
+## 🔐 Authentication
+This architecture includes full **JWT (JSON Web Token)** Authentication. 
+Before you can upload or view images, you must register a user account.
+1. Open the React frontend (`http://localhost:5173/`).
+2. Click **Register here** to create an account (e.g., `testuser` / `test@example.com` / `password123`).
+3. Your JWT token will be stored securely in localStorage, and the upload gallery flow will unlock automatically!
