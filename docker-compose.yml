@@ -35,6 +35,19 @@ services:
     volumes:
       - minio-data:/data
 
+  init-minio:
+    image: minio/mc
+    container_name: learning-init-minio
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb myminio/learning-uploads --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/learning-uploads;
+      exit 0;
+      "
+
 volumes:
   mongo-data:
   minio-data:
