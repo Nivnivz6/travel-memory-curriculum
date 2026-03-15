@@ -4,7 +4,8 @@ const cache = (keyPrefix) => {
   return async (req, res, next) => {
     try {
       const client = getRedisClient();
-      const key = `${keyPrefix}:${req.originalUrl}`;
+      const userKey = req.user ? `:${req.user._id}` : '';
+      const key = `${keyPrefix}${userKey}:${req.originalUrl}`;
       const cached = await client.get(key);
 
       if (cached) {

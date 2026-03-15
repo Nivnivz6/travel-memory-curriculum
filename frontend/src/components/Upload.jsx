@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api';
 
-function Upload({ images, setImages, logout }) {
+function Upload({ images, setImages, logout, token }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,6 +36,7 @@ function Upload({ images, setImages, logout }) {
       const res = await axios.post(`${API_URL}/images/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
         },
       });
       

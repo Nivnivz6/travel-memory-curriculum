@@ -16,20 +16,6 @@ function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [isLoginMode, setIsLoginMode] = useState(true);
 
-  // Setup Axios interceptor to always attach token
-  useEffect(() => {
-    const interceptor = axios.interceptors.request.use((config) => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
-
-    return () => {
-      axios.interceptors.request.eject(interceptor);
-    };
-  }, [token]);
-
   // Fetch images when token changes
   useEffect(() => {
     if (token) {
@@ -39,7 +25,9 @@ function App() {
 
   const fetchImages = async () => {
     try {
-      const res = await axios.get(`${API_URL}/images`);
+      const res = await axios.get(`${API_URL}/images`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setImages(res.data);
     } catch (err) {
       console.error('Failed to fetch images:', err);
@@ -96,7 +84,7 @@ function App() {
       </header>
 
       <main>
-        <Upload images={images} setImages={setImages} logout={logout} />
+        <Upload images={images} setImages={setImages} logout={logout} token={token} />
         <Gallery images={images} />
       </main>
     </div>

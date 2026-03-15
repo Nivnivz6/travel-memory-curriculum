@@ -75,6 +75,10 @@ describe('Travel Memory App Authentication Flow', () => {
         email: 'student@example.com',
         password: 'secret123'
       });
+      // The subsequent get should now have headers
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/images', {
+        headers: { Authorization: "Bearer fake-jwt-token-from-backend" }
+      });
     });
   });
 
