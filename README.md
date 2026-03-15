@@ -7,7 +7,13 @@ Your job is to fix the entirely broken frontend Application. We have refactored 
 
 We have stripped out all the React `useState` hooks, the authentication form handlers, and the `axios` fetch calls.
 
-However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the extensive `// TODO:` comments inside `App.jsx` and each component file to safely rebuild the frontend flow and learn how to pass state via `props`.
+However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the extensive `// TODO:` comments inside the following files to safely rebuild the frontend flow and learn how to pass state via `props`:
+
+- `frontend/src/App.jsx`
+- `frontend/src/components/Login.jsx`
+- `frontend/src/components/Register.jsx`
+- `frontend/src/components/Upload.jsx`
+- `frontend/src/components/Gallery.jsx`
 
 ## 💻 Prerequisites & Environment Setup
 If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
