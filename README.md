@@ -37,31 +37,85 @@ Restart your computer. Upon reboot, an Ubuntu terminal will open. Create your UN
 ## 📚 The Lesson Concepts
 
 ### 1. React Single Page Applications (SPAs)
-Unlike traditional websites that reload the entire browser page when you click a link, **SPAs** use JavaScript to manipulate the DOM (Document Object Model) instantly. React achieves this using a **Virtual DOM**, making state changes incredibly fast without annoying page refreshes.
+Traditional websites reload the entire page every time you click a link or submit a form. This requires the server to send a fresh HTML document every time, making the internet feel slow and clunky. 
+
+**React SPAs** are different. Only one single HTML page is ever sent to the browser (`index.html`). After that, React uses JavaScript to instantly swap out "Components" (like Lego blocks) directly in the browser's Document Object Model (DOM). It uses a **Virtual DOM** to figure out the exact minimal changes needed, making state changes lightning fast without annoying full-page refreshes. 
 
 ### 2. Form Control with `useState`
-In React, forms should be "Controlled Components". This means the data in the form is directly tied to a React state variable (`useState`), rather than relying on the HTML `<input>` elements holding their own invisible state.
+In pure HTML, an `<input>` field holds its own state. If you type "Hello", the DOM remembers "Hello". However, React hates this because React wants to be the single source of truth for all data in your app.
+
+We solve this using **Controlled Components** with the `useState` hook. Every time the user types a single character, we update a React state variable, and force the input to read its value *from* that state variable.
+
+*Example:*
+```javascript
+const [email, setEmail] = useState('');
+
+// The input 'value' is locked to the React state. 
+// The 'onChange' fires on every keystroke to update the state.
+<input 
+  type="email" 
+  value={email} 
+  onChange={(e) => setEmail(e.target.value)} 
+/>
+```
 - [React Documentation on `useState`](https://react.dev/reference/react/useState)
 - [React Documentation on Form Elements](https://react.dev/reference/react-dom/components/input)
 
 ### 3. Session Management with JWTs
-When a user logs in, the backend sends a **JSON Web Token (JWT)**. To keep the user logged in even if they refresh the page, we need to save this token locally in the browser. 
-We use the native `localStorage` API to acheive this:
+When a user logs in, HTTP is inherently "stateless"—the server forgets who you are the moment it responds. To remember the user, the backend generates a **JSON Web Token (JWT)**, which acts like a secure digital wristband or hotel keycard.
+
+To stay logged in after refreshing the page, the React app must save this wristband in the browser's local memory. We use the native `localStorage` API to achieve this:
+
+*Example:*
 ```javascript
-localStorage.setItem('token', 'eyJhbGciOi...');
+// Saving the token after a successful login
+localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5...');
+
+// Retrieving the token when the app first loads
 const savedToken = localStorage.getItem('token');
 ```
-You will configure Axios to automatically attach this token to every outgoing `fetch` request using interceptors.
 
-### 4. Making API Calls
-You'll use `axios` (or standard `fetch`) to communicate with the REST API. When making HTTP `POST` requests, you'll pass dynamic JavaScript objects. When dealing with Files (like uploading images), you'll need to wrap them in a native `FormData` object.
-- [MDN Fetch API Reference](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+You are responsible for saving this token upon login/register, and deleting it upon logout.
+
+### 4. Making API Calls with Axios
+Your frontend needs to talk to the backend. While modern browsers have the native `fetch()` API, developers overwhelmingly prefer **Axios** because it automatically parses JSON data and has cleaner syntax.
+
+*Example of a standard POST request:*
+```javascript
+const response = await axios.post('http://localhost:3000/api/auth/login', {
+  email: 'test@test.com',
+  password: 'password123'
+});
+console.log(response.data.token); // The JWT!
+```
+
+*Example of uploading files:*
+You cannot send a raw image file as JSON. You must wrap it in a native `FormData` object!
+```javascript
+const formData = new FormData();
+formData.append('image', myImageFile);
+
+// Note the special headers required for files
+await axios.post('/api/images/upload', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+```
 - [MDN FormData Reference](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
 ### 5. Data Isolation (Tenant Privacy)
 A real-world application is useless if everyone can see everyone else's private files! 
-- When building `fetchImages()`, you must explicitly pass your JWT token to the backend using the `Authorization: Bearer <token>` header.
-- This proves *who* you are. The backend uses this ID to query the database correctly (`Image.find({ userId: req.user._id })`), ensuring you ONLY get your personal images returned. This is called **Tenant Isolation**.
+
+When you ask the backend for "My Uploaded Images", the backend needs proof of *who you are*. You provide this proof by attaching your JWT "wristband" to the specific GET request via an `Authorization` header.
+
+*Example:*
+```javascript
+const token = localStorage.getItem('token');
+const response = await axios.get('http://localhost:3000/api/images', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+```
+
+This ensures the backend queries the database using your specific User ID (`Image.find({ userId: req.user._id })`), meaning you ONLY get your personal images returned. This critical security concept is called **Tenant Isolation**.
 
 ## 🧪 Test-Driven Development (TDD)
 We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
