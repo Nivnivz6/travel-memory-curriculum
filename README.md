@@ -12,6 +12,37 @@ This application demonstrates a production-grade architecture scaled down for lo
 - **Message Broker:** RabbitMQ.
 - **Background Worker:** A Node.js worker service that processes messages out-of-band.
 
+## 📚 The Lesson Concepts (Master Build)
+Since this is the fully implemented project, here is a combined overview of the core technologies you will learn by studying this branch:
+
+### 1. React Single Page Applications & State
+**React SPAs** render a single HTML page and use a **Virtual DOM** to swap components instantly via JavaScript, avoiding slow page reloads. We control UI data using the `useState` hook. For example, inputs are "controlled components" locked to React state:
+```javascript
+const [email, setEmail] = useState('');
+<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+```
+We handle API fetching outside the render cycle using the `useEffect` hook.
+
+### 2. Node.js, Express, & REST APIs
+**Node.js** executes JavaScript on the server. **Express.js** provides routing to build a REST API (handling GET, POST, PUT, DELETE requests and returning JSON data). 
+```javascript
+app.get('/api/greeting', (req, res) => {
+  res.json({ message: "Hello from Express!" });
+});
+```
+
+### 3. MongoDB & Mongoose
+We use **MongoDB** (a NoSQL Document Database) to store flexible JSON-like data. To enforce structure (like requiring usernames and emails), we use the **Mongoose** Object Data Modeling (ODM) library giving us clean query methods like `User.create()`.
+
+### 4. User Authentication & JWTs
+We protect passwords by hashing them with `bcryptjs`. When a user logs in, we generate a stateless **JSON Web Token (JWT)**.
+1. The backend signs the JWT (`jwt.sign()`) and returns it.
+2. The React frontend saves it locally (`localStorage.setItem()`).
+3. React attaches the token to an `Authorization: Bearer <token>` header for secure API calls using Axios.
+
+### 5. Data Isolation
+When fetching images, we verify the user's JWT so the backend only queries database records belonging to their exact ID (`Image.find({ userId: req.user._id })`). This ensures Tenant Privacy!
+
 ---
 
 ## 🚀 Getting Started
