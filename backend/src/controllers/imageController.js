@@ -53,7 +53,7 @@ const uploadImage = async (req, res, next) => {
 // @route   GET /api/images
 const getImages = async (req, res, next) => {
   try {
-    const images = await Image.find().sort({ createdAt: -1 });
+    const images = await Image.find({ userId: req.user._id }).sort({ createdAt: -1 });
     res.json(images);
   } catch (err) {
     next(err);

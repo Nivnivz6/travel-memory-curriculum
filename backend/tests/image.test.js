@@ -117,7 +117,7 @@ describe('Image Endpoints', () => {
   });
 
   describe('GET /api/images', () => {
-    it('should return all images', async () => {
+    it('should return all images for the authenticated user', async () => {
       // Seed an image directly in DB
       const Image = require('../src/models/Image');
       await Image.create({
@@ -136,6 +136,39 @@ describe('Image Endpoints', () => {
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body.length).toBe(1);
       expect(res.body[0].filename).toBe('test.jpg');
+    });
+
+    it('should strictly enforce Data Isolation (Tenant Isolation)', async () => {
+      // 1. User A (testUser) uploads an image
+      const Image = require('../src/models/Image');
+      await Image.create({
+        userId: testUser._id,
+        filename: 'user-a-private.jpg',
+        s3Key: 'uploads/user-a-private.jpg',
+        s3Url: 'http://localhost:9000/learning-uploads/user-a-private.jpg',
+        status: 'pending',
+      });
+
+      // 2. Create User B
+      const userB = await User.create({
+        username: 'isolateduser',
+        email: 'isolateduser@example.com',
+        password: 'testpassword123',
+      });
+
+      // 3. Generate Token for User B
+      const jwt = require('jsonwebtoken');
+      const tokenB = jwt.sign({ id: userB._id }, process.env.JWT_SECRET || 'fallback_secret');
+
+      // 4. User B attempts to fetch their gallery
+      const res = await request(app)
+        .get('/api/images')
+        .set('Authorization', `Bearer ${tokenB}`);
+      
+      // 5. Assert User B sees NOTHING, completely isolated from User A's data
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(0);
     });
 
     it('should return empty array when no images exist', async () => {
