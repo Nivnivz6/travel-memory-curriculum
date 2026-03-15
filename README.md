@@ -15,25 +15,6 @@ However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the
 - `frontend/src/components/Upload.jsx`
 - `frontend/src/components/Gallery.jsx`
 
-## 💻 Prerequisites & Environment Setup
-If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
-
-### 1. Install WSL (Windows 11)
-Open **PowerShell as an Administrator** and run:
-```powershell
-wsl --install
-```
-Restart your computer. Upon reboot, an Ubuntu terminal will open. Create your UNIX username and password.
-
-### 2. Docker Desktop
-1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
-2. In Docker Settings -> Resources -> WSL Integration, ensure integration is enabled for your default WSL distro (`Ubuntu`).
-
-### 3. VS Code Setup
-1. Open VS Code in Windows.
-2. Install the **WSL extension** by Microsoft.
-3. Open your project folder using the bottom left green `><` button -> "Reopen in WSL".
-
 ## 📚 The Lesson Concepts
 
 ### 1. React Single Page Applications (SPAs)
@@ -48,6 +29,9 @@ We solve this using **Controlled Components** with the `useState` hook. Every ti
 
 *Example:*
 ```javascript
+import { useState } from 'react';
+
+// Inside your component:
 const [email, setEmail] = useState('');
 
 // The input 'value' is locked to the React state. 
@@ -92,13 +76,15 @@ localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5...');
 const savedToken = localStorage.getItem('token');
 ```
 
-You are responsible for saving this token upon login/register, and deleting it upon logout.
+You are responsible for saving this token upon login/register, and deleting it upon logout via `localStorage.removeItem('token')`.
 
-### 4. Making API Calls with Axios
+### 5. Making API Calls with Axios
 Your frontend needs to talk to the backend. While modern browsers have the native `fetch()` API, developers overwhelmingly prefer **Axios** because it automatically parses JSON data and has cleaner syntax.
 
 *Example of a standard POST request:*
 ```javascript
+import axios from 'axios';
+
 const response = await axios.post('http://localhost:3000/api/auth/login', {
   email: 'test@test.com',
   password: 'password123'
@@ -113,13 +99,13 @@ const formData = new FormData();
 formData.append('image', myImageFile);
 
 // Note the special headers required for files
-await axios.post('/api/images/upload', formData, {
+await axios.post('http://localhost:3000/api/images/upload', formData, {
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 ```
 - [MDN FormData Reference](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
-### 5. Data Isolation (Tenant Privacy)
+### 6. Data Isolation (Tenant Privacy)
 A real-world application is useless if everyone can see everyone else's private files! 
 
 When you ask the backend for "My Uploaded Images", the backend needs proof of *who you are*. You provide this proof by attaching your JWT "wristband" to the specific GET request via an `Authorization` header.
@@ -133,6 +119,25 @@ const response = await axios.get('http://localhost:3000/api/images', {
 ```
 
 This ensures the backend queries the database using your specific User ID (`Image.find({ userId: req.user._id })`), meaning you ONLY get your personal images returned. This critical security concept is called **Tenant Isolation**.
+
+## 💻 Prerequisites & Environment Setup
+If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
+
+### 1. Install WSL (Windows 11)
+Open **PowerShell as an Administrator** and run:
+```powershell
+wsl --install
+```
+Restart your computer. Upon reboot, an Ubuntu terminal will open. Create your UNIX username and password.
+
+### 2. Docker Desktop
+1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
+2. In Docker Settings -> Resources -> WSL Integration, ensure integration is enabled for your default WSL distro (`Ubuntu`).
+
+### 3. VS Code Setup
+1. Open VS Code in Windows.
+2. Install the **WSL extension** by Microsoft.
+3. Open your project folder using the bottom left green `><` button -> "Reopen in WSL".
 
 ## 🧪 Test-Driven Development (TDD)
 We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
