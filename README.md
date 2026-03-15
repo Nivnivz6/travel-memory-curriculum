@@ -3,9 +3,11 @@
 Welcome to Phase 1 of the Travel Memory App curriculum! In this phase, you are focusing solely on the **Frontend React Single Page Application (SPA)**. The backend logic has been temporarily stripped—you will build that in Phase 2.
 
 ## 🛠️ The Ultimate Goal
-Your job is to fix the entirely broken `frontend/src/App.jsx` file. We have stripped out all the React `useState` hooks, the authentication form handlers, and the `axios` fetch calls.
+Your job is to fix the entirely broken frontend Application. We have refactored the project into a proper Component Architecture (`frontend/src/components/`), separating the App into `Login`, `Register`, `Upload`, and `Gallery` components.
 
-However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the extensive `// TODO:` comments inside `App.jsx` to rebuild the frontend flow.
+We have stripped out all the React `useState` hooks, the authentication form handlers, and the `axios` fetch calls.
+
+However, we left the **JSX** (the HTML-like structure) mostly intact! Follow the extensive `// TODO:` comments inside `App.jsx` and each component file to safely rebuild the frontend flow and learn how to pass state via `props`.
 
 ## 💻 Prerequisites & Environment Setup
 If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
@@ -53,7 +55,7 @@ You'll use `axios` (or standard `fetch`) to communicate with the REST API. When 
 ## 🧪 Test-Driven Development (TDD)
 We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
 
-Your assignment is to write code in `App.jsx` until all tests pass!
+Your assignment is to write code in `App.jsx` and the components in `src/components/` until all tests pass!
 
 ### How to Run Your Assignment:
 ```bash
@@ -67,6 +69,6 @@ npm install
 npm run test:watch
 ```
 
-Keep your terminal open. Every time you save `App.jsx`, Vitest will instantly re-run the tests. Read the failing error messages closely—they tell you exactly what is missing!
+Keep your terminal open. Every time you save a component file, Vitest will instantly re-run the tests. Read the failing error messages closely—they tell you exactly what is missing!
 
 Good luck!
