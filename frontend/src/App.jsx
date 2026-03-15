@@ -23,6 +23,10 @@ function App() {
 
   const fetchImages = async () => {
     // TODO: Write an async function that sends a GET request to `/api/images`.
+    // CRITICAL (Data Isolation): When fetching images, the backend MUST know exactly who is asking
+    // so it doesn't accidentally return another user's private photos!
+    // Therefore, you MUST configure Axios here to inject the `Authorization: Bearer <token>` 
+    // header into this GET request.
     // Store the returned array of images into your `images` state.
     // If you receive a 401 status code (Unauthorized), invoke the `logout()` function.
   };

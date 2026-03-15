@@ -58,6 +58,11 @@ You'll use `axios` (or standard `fetch`) to communicate with the REST API. When 
 - [MDN Fetch API Reference](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - [MDN FormData Reference](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
+### 5. Data Isolation (Tenant Privacy)
+A real-world application is useless if everyone can see everyone else's private files! 
+- When building `fetchImages()`, you must explicitly pass your JWT token to the backend using the `Authorization: Bearer <token>` header.
+- This proves *who* you are. The backend uses this ID to query the database correctly (`Image.find({ userId: req.user._id })`), ensuring you ONLY get your personal images returned. This is called **Tenant Isolation**.
+
 ## 🧪 Test-Driven Development (TDD)
 We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
 
