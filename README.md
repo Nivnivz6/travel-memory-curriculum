@@ -61,7 +61,24 @@ const [email, setEmail] = useState('');
 - [React Documentation on `useState`](https://react.dev/reference/react/useState)
 - [React Documentation on Form Elements](https://react.dev/reference/react-dom/components/input)
 
-### 3. Session Management with JWTs
+### 3. Side Effects with `useEffect`
+While `useState` handles data that changes *inside* your component triggered by a user, `useEffect` handles side-effects that happen *outside* your component, such as fetching data from a backend server when a component first loads.
+
+*Example:*
+```javascript
+import { useEffect } from 'react';
+
+// The useEffect takes a function to run, and an array of "dependencies"
+useEffect(() => {
+  // This code will run when the component first mounts to the screen
+  fetchSomeData();
+}, []); // An empty array means "Run this only ONCE when the component loads"
+```
+
+If you put a state variable in the array (e.g., `[token]`), React will re-run the `useEffect` automatically every single time the `token` changes! 
+- [React Documentation on `useEffect`](https://react.dev/reference/react/useEffect)
+
+### 4. Session Management with JWTs
 When a user logs in, HTTP is inherently "stateless"—the server forgets who you are the moment it responds. To remember the user, the backend generates a **JSON Web Token (JWT)**, which acts like a secure digital wristband or hotel keycard.
 
 To stay logged in after refreshing the page, the React app must save this wristband in the browser's local memory. We use the native `localStorage` API to achieve this:

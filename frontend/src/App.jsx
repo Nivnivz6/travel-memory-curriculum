@@ -16,10 +16,10 @@ function App() {
   // TODO: Add auth state variables for `token` (string from localStorage),
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
   
-  // TODO: Set up an Axios interceptor inside a useEffect hook. Every time the `token` variable changes, 
-  // configure axios to inject `Authorization: Bearer <token>` into the request headers.
-
-  // TODO: In a useEffect hook, check if there is a `token`. If so, invoke `fetchImages()`.
+  // TODO (useEffect): React uses the `useEffect` hook to run side effects (like fetching data from an API) 
+  // outside the normal rendering cycle. 
+  // Create a `useEffect` hook that listens to the `token` state variable in its dependency array.
+  // Inside the hook, check if a `token` exists. If it does, invoke your `fetchImages()` function!
 
   const fetchImages = async () => {
     // TODO: Write an async function that sends a GET request to `/api/images`.
