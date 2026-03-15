@@ -5,7 +5,11 @@ function Gallery({ images }) {
     <section className="gallery-section">
       <h2>Your Uploads</h2>
       
-      {/* TODO: Check if the `images` array passed via props is empty. */}
+      {/* 
+        TODO: Check if the `images` array passed via props is empty. 
+        CRITICAL: Remember to attach your JWT token in the Authorization header 
+        (in your App.jsx fetch request) so the backend knows who you are! 
+      */}
       {/* If empty, render this empty-state div. */}
       {/* If it contains images, map through the array and render a `.gallery-item` for each image. */}
       <div className="empty-state">

@@ -18,7 +18,8 @@ function Upload({ images, setImages, logout }) {
     // 3. Send a POST request to `/api/images/upload`.
     // 4. Important: The response contains the saved image object. Prepend it directly 
     //    into your `images` array (using the `setImages` prop) so it renders instantly!
-    // 5. If returning a 401 error, call `logout()`.
+    // 5. Remember to attach your JWT token in the Authorization header so the backend knows who you are!
+    // 6. If returning a 401 error, call `logout()`.
   };
 
   return (
