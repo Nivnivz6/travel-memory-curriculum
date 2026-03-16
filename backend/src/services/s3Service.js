@@ -1,20 +1,28 @@
 const s3 = require('../config/s3');
 
 const uploadFile = async (fileBuffer, filename, mimetype) => {
-  // TODO: 1. Construct a unique Key for the file (e.g., use Date.now() + original filename)
+  // --- EXPLORE: S3 UPLOAD CHALLENGE ---
   
-  // TODO: 2. Define the 'params' for the s3.upload() call:
-  //          - Bucket: (from process.env.AWS_S3_BUCKET)
-  //          - Key: (your unique key)
-  //          - Body: (the fileBuffer)
-  //          - ContentType: (the mimetype)
-  
-  // TODO: 3. Call s3.upload(params).promise() to perform the upload.
-  
-  // TODO: 4. Return an object containing the 'key' and the 'url' (Location) of the uploaded file.
+  // Step 1: GENERATE a unique Key for the object.
+  // HINT: Use Date.now() combined with the original filename to prevent overwriting.
+  // const key = ...;
+
+  // Step 2: CONSTRUCT the 'params' object for the AWS S3 SDK.
+  // Documentation: The SDK expects: Bucket, Key, Body, and ContentType.
+  // const params = {
+  //   Bucket: process.env.AWS_S3_BUCKET,
+  //   ...
+  // };
+
+  // Step 3: EXECUTE the upload using s3.upload(params).
+  // HINT: Append .promise() to the upload call to make it awaitable in this async function!
+  // const result = await ...;
+
+  // Step 4: RETURN the structured result.
+  // The controller expects an object with 'key' and 'url' (found in result.Location).
   return {
-    key: 'TODO_KEY',
-    url: 'TODO_URL'
+    key: 'TODO: Return Key from result.Key',
+    url: 'TODO: Return URL from result.Location'
   };
 };
 
