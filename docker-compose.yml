@@ -48,6 +48,14 @@ services:
       exit 0;
       "
 
+# TODO: Phase 3 - Wire up the Backend API Service
+# 1. Define a service named 'api'
+# 2. Use 'build: ./backend' to point to your new Dockerfile
+# 3. Map port 3000:3000
+# 4. Add 'depends_on' for db, redis, rabbitmq, and minio
+# 5. Inject environment variables (MONGODB_URI, REDIS_URL, etc.)
+#    HINT: Inside the Docker network, use the service names (e.g., mongodb://db:27017)
+
 volumes:
   mongo-data:
   minio-data:
