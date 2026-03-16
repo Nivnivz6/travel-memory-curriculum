@@ -3,27 +3,25 @@ const { getRedisClient } = require('../config/redis');
 const cache = (keyPrefix) => {
   return async (req, res, next) => {
     try {
-      const client = getRedisClient();
-      const userKey = req.user ? `:${req.user._id}` : '';
-      const key = `${keyPrefix}${userKey}:${req.originalUrl}`;
-      const cached = await client.get(key);
-
-      if (cached) {
-        return res.json(JSON.parse(cached));
-      }
-
-      // Store original json method
-      const originalJson = res.json.bind(res);
-
-      // Override res.json to cache the response before sending
-      res.json = (data) => {
-        client.setex(key, 3600, JSON.stringify(data)).catch(console.error);
-        return originalJson(data);
-      };
-
+      // TODO: 1. Get the Redis client using getRedisClient()
+      
+      // TODO: 2. Construct a unique cache key. 
+      // HINT: Use the keyPrefix, the user's ID (if authenticated), and req.originalUrl
+      
+      // TODO: 3. Try to GET the data from Redis using the key.
+      
+      // TODO: 4. If data exists in cache:
+      //          - Parse the stringified JSON back into an object.
+      //          - Return the response immediately using res.json().
+      
+      // TODO: 5. If data DOES NOT exist in cache:
+      //          - We need to capture the response from the next middleware/controller!
+      //          - Override res.json to catch the data before it's sent to the client.
+      //          - Inside the overridden res.json, use client.setex() to store the data in Redis.
+      //          - HINT: Set an expiration time (e.g., 3600 seconds) so the cache doesn't stay forever.
+      
       next();
     } catch (err) {
-      // If Redis fails, just skip caching
       console.error('Cache middleware error:', err.message);
       next();
     }

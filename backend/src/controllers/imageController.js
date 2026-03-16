@@ -44,10 +44,9 @@ const uploadImage = async (req, res, next) => {
       action: 'process-image',
     });
 
-    // Invalidate the cache for this user
-    const redis = getRedisClient();
-    const cacheKey = `images:${userId}:/api/images`;
-    await redis.del(cacheKey);
+    // TODO: Invalidate the Redis cache for this user!
+    // Why? Because we just uploaded a new image, so the old list of images is stale.
+    // HINT: Delete the key associated with this user's image gallery list.
 
     res.status(201).json(image);
   } catch (err) {
