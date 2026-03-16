@@ -12,15 +12,18 @@ const createUser = async (req, res, next) => {
       throw error;
     }
 
+    // Manual duplicate check (no unique index on schema)
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      const error = new Error('Username or email already exists');
+      error.statusCode = 400;
+      throw error;
+    }
+
     const user = await User.create({ username, email, password });
 
     res.status(201).json(user);
   } catch (err) {
-    // Handle Mongoose duplicate key error
-    if (err.code === 11000) {
-      err.statusCode = 400;
-      err.message = 'Username or email already exists';
-    }
     next(err);
   }
 };
