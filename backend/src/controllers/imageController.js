@@ -2,59 +2,34 @@ const Image = require('../models/Image');
 const { uploadFile } = require('../services/s3Service');
 const { publishMessage } = require('../services/queueService');
 
-// @desc    Upload an image
+// @desc    Upload a new image
 // @route   POST /api/images/upload
 const uploadImage = async (req, res, next) => {
   try {
-    if (!req.file) {
-      const error = new Error('Please upload an image file');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const userId = req.user._id;
-
-    if (!userId) {
-      const error = new Error('User not authenticated');
-      error.statusCode = 401;
-      throw error;
-    }
-
-    // Upload file to S3
-    const s3Result = await uploadFile(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype
-    );
-
-    // Save image metadata to MongoDB
-    const image = await Image.create({
-      userId,
-      filename: req.file.originalname,
-      s3Key: s3Result.key,
-      s3Url: s3Result.url,
-      status: 'pending',
-    });
-
-    // Publish message to RabbitMQ for background processing
-    await publishMessage({
-      imageId: image._id.toString(),
-      s3Key: s3Result.key,
-      action: 'process-image',
-    });
-
-    res.status(201).json(image);
+    // TODO: 1. Check that a file was uploaded: if (!req.file) return error 400.
+    // TODO: 2. Check that req.user exists (the Auth middleware sets this).
+    // TODO: 3. Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
+    // TODO: 4. Create an Image document in MongoDB with:
+    //          { userId: req.user._id, filename: req.file.originalname, s3Key: s3Result.Key, s3Url: s3Result.Location }
+    // TODO: 5. Publish a background message to RabbitMQ:
+    //          await publishMessage('image-processing', { imageId: image._id, s3Key: s3Result.Key, action: 'process-image' });
+    // TODO: 6. Respond with 201 and the saved image document.
+    return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Get all images
+// @desc    Get all images (DATA ISOLATION!)
 // @route   GET /api/images
 const getImages = async (req, res, next) => {
   try {
-    const images = await Image.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.json(images);
+    // TODO: CRITICAL — Data Isolation!
+    // DO NOT use Image.find({}) — that returns EVERYONE's images!
+    // You MUST filter by the logged-in user:
+    //   const images = await Image.find({ userId: req.user._id });
+    // Then respond with res.json(images);
+    return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
     next(err);
   }
@@ -64,15 +39,10 @@ const getImages = async (req, res, next) => {
 // @route   GET /api/images/:id
 const getImageById = async (req, res, next) => {
   try {
-    const image = await Image.findById(req.params.id);
-
-    if (!image) {
-      const error = new Error('Image not found');
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.json(image);
+    // TODO: 1. Query: const image = await Image.findById(req.params.id);
+    // TODO: 2. If !image, throw a 404 error with message 'Image not found'.
+    // TODO: 3. Respond with res.json(image);
+    return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
     if (err.kind === 'ObjectId') {
       err.statusCode = 404;

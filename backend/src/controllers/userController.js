@@ -4,25 +4,17 @@ const User = require('../models/User');
 // @route   POST /api/users
 const createUser = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      const error = new Error('Please provide username, email, and password');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    // Manual duplicate check (no unique index on schema)
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    if (existingUser) {
-      const error = new Error('Username or email already exists');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const user = await User.create({ username, email, password });
-
-    res.status(201).json(user);
+    // TODO: 1. Extract `username`, `email`, and `password` from `req.body`.
+    // TODO: 2. Validate all three fields exist. If missing, create an error with
+    //          message 'Please provide username, email, and password',
+    //          set error.statusCode = 400, and throw it.
+    // TODO: 3. MANUAL DUPLICATE CHECK — Query the database:
+    //          const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    //          If existingUser, throw an error with message 'Username or email already exists'
+    //          and statusCode 400.
+    // TODO: 4. Create the user: const user = await User.create({ username, email, password });
+    // TODO: 5. Respond with: res.status(201).json(user);
+    return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
     next(err);
   }
@@ -32,17 +24,12 @@ const createUser = async (req, res, next) => {
 // @route   GET /api/users/:id
 const getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      const error = new Error('User not found');
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.json(user);
+    // TODO: 1. Use `req.params.id` to query: const user = await User.findById(req.params.id);
+    // TODO: 2. If !user, create an error with message 'User not found' and statusCode 404, throw it.
+    // TODO: 3. Respond with: res.json(user);
+    return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
-    // Handle invalid ObjectId
+    // Handle invalid ObjectId format
     if (err.kind === 'ObjectId') {
       err.statusCode = 404;
       err.message = 'User not found';

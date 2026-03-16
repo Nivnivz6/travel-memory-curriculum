@@ -1,130 +1,264 @@
-# Travel Memory App — The Master Build (Phase 0)
+# Phase 2: Express Auth & The Data Layer
 
-Welcome to the definitive, complete architecture of the Travel Memory App! This branch (`main`) contains the fully solved, fully implemented Full-Stack application.
+Welcome to Phase 2 of the Travel Memory App curriculum! In Phase 1, you wired up a beautiful React frontend. Now it's time to build the **entire backend** — the Express API server, the MongoDB data layer, and full User Authentication. By the end of this phase, your React app will be talking to a real API that saves real users and real images to a real database!
 
-## Architecture Overview
-This application demonstrates a production-grade architecture scaled down for local development:
-- **Frontend:** React SPA built with Vite.
-- **Backend API:** Node.js & Express REST API.
-- **Primary Database:** MongoDB (Document Store).
-- **Cache:** Redis (In-memory Key-Value Store).
-- **Object Storage:** MinIO (Local S3-compatible storage for image files).
-- **Message Broker:** RabbitMQ.
-- **Background Worker:** A Node.js worker service that processes messages out-of-band.
+## 🛠️ The Ultimate Goal
+Your mission is to rebuild the `backend/` directory from the ground up. We have provided the Express skeleton (routing files, middleware structure), but we **completely hollowed out**:
 
-## 📚 The Lesson Concepts (Master Build)
-Since this is the fully implemented project, here is a combined overview of the core technologies you will learn by studying this branch:
+1. **The Mongoose Schemas** — The database blueprints are empty. You must define them first.
+2. **The Controllers** — All route handlers return `501 Not Implemented`. You must write the logic.
+3. **The Auth Middleware** — The JWT verification gate rejects everything. You must implement it.
 
-### 1. React Single Page Applications & State
-**React SPAs** render a single HTML page and use a **Virtual DOM** to swap components instantly via JavaScript, avoiding slow page reloads. We control UI data using the `useState` hook. For example, inputs are "controlled components" locked to React state:
+### Build Order (Important!)
+You **must** build in this order — controllers depend on schemas, and image routes depend on auth:
+1. `backend/src/models/User.js` — Define the User schema
+2. `backend/src/models/Image.js` — Define the Image schema
+3. `backend/src/controllers/userController.js` — Basic CRUD
+4. `backend/src/controllers/authController.js` — Register & Login with JWT
+5. `backend/src/middleware/auth.js` — JWT verification gate
+6. `backend/src/controllers/imageController.js` — Upload & Gallery with Data Isolation
+
+### Files with `// TODO:` Comments
+- `backend/src/models/User.js`
+- `backend/src/models/Image.js`
+- `backend/src/controllers/authController.js`
+- `backend/src/controllers/userController.js`
+- `backend/src/controllers/imageController.js`
+- `backend/src/middleware/auth.js`
+
+---
+
+## 📚 The Lesson Concepts
+
+### 1. What is Node.js?
+JavaScript was born inside the web browser. For decades, it could **only** run inside Chrome, Firefox, or Safari. Then in 2009, a developer named Ryan Dahl took Chrome's V8 JavaScript engine and packaged it into a standalone runtime called **Node.js**.
+
+This was revolutionary — suddenly, JavaScript could run directly on your operating system, access the file system, listen on network ports, and talk to databases. This meant you could use the **same language** (JavaScript) for both your frontend AND your backend.
+
+When you run `node server.js`, you are telling Node.js to execute that JavaScript file outside of any browser.
+
+### 2. What is Express.js?
+Node.js by itself gives you raw tools — like `http.createServer()` — but building an API with raw Node is tedious and messy. **Express.js** is a lightweight framework that sits on top of Node.js and gives you an elegant way to define **Routes**.
+
+A Route maps an HTTP method (GET, POST, PUT, DELETE) to a specific URL path and a handler function:
+
 ```javascript
-const [email, setEmail] = useState('');
-<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-```
-We handle API fetching outside the render cycle using the `useEffect` hook.
+const express = require('express');
+const app = express();
 
-### 2. Node.js, Express, & REST APIs
-**Node.js** executes JavaScript on the server. **Express.js** provides routing to build a REST API (handling GET, POST, PUT, DELETE requests and returning JSON data). 
-```javascript
+// When someone sends a GET request to /api/greeting, run this function:
 app.get('/api/greeting', (req, res) => {
-  res.json({ message: "Hello from Express!" });
+  res.json({ message: 'Hello from Express!' });
+});
+
+// When someone sends a POST request to /api/users, run this function:
+app.post('/api/users', (req, res) => {
+  const { username } = req.body; // Access the data sent by the client
+  res.status(201).json({ username });
 });
 ```
 
-### 3. MongoDB & Mongoose
-We use **MongoDB** (a NoSQL Document Database) to store flexible JSON-like data. To enforce structure (like requiring usernames and emails), we use the **Mongoose** Object Data Modeling (ODM) library giving us clean query methods like `User.create()`.
+Express also uses **Middleware** — functions that run _before_ your route handler. For example, `express.json()` automatically parses incoming JSON bodies so you can access `req.body`. Check `backend/src/app.js` to see these middleware in action!
 
-### 4. User Authentication & JWTs
-We protect passwords by hashing them with `bcryptjs`. When a user logs in, we generate a stateless **JSON Web Token (JWT)**.
-1. The backend signs the JWT (`jwt.sign()`) and returns it.
-2. The React frontend saves it locally (`localStorage.setItem()`).
-3. React attaches the token to an `Authorization: Bearer <token>` header for secure API calls using Axios.
+### 3. REST APIs & HTTP Methods
+A **REST API** (Representational State Transfer) is a standardized way for your frontend to communicate with your backend. Think of it as a structured conversation:
 
-### 5. Data Isolation
-When fetching images, we verify the user's JWT so the backend only queries database records belonging to their exact ID (`Image.find({ userId: req.user._id })`). This ensures Tenant Privacy!
+| HTTP Method | Purpose | Example |
+|---|---|---|
+| `GET` | **Read** data | `GET /api/images` → Fetch all images |
+| `POST` | **Create** new data | `POST /api/auth/register` → Create a user |
+| `PUT` | **Update** existing data | `PUT /api/users/123` → Edit a user |
+| `DELETE` | **Remove** data | `DELETE /api/images/456` → Delete an image |
+
+The client sends a **Request** with optional headers and a body. The server processes it and returns a **Response** with a status code and JSON data.
+
+Common Status Codes:
+- `200` — OK (success)
+- `201` — Created (new resource saved)
+- `400` — Bad Request (invalid input)
+- `401` — Unauthorized (no valid token)
+- `404` — Not Found
+- `500` — Internal Server Error
+
+### 4. What is CORS?
+Your React app runs on `http://localhost:5173`. Your Express API runs on `http://localhost:3000`. These are **different origins** (different ports = different origins).
+
+By default, browsers enforce a **Same-Origin Policy** that blocks requests between different origins. This is a critical security feature — it prevents malicious websites from secretly calling your bank's API.
+
+To allow your React frontend to talk to your Express backend, we use the `cors` middleware:
+
+```javascript
+const cors = require('cors');
+app.use(cors()); // "I accept traffic from any origin"
+```
+
+Check `backend/src/app.js` — CORS is already enabled for you!
+
+### 5. Document Databases vs SQL
+Traditional databases (like PostgreSQL or MySQL) store data in rigid **tables** with fixed columns. Before you can save a user, you must define the exact column names, types, and sizes.
+
+**MongoDB** is a **Document Database** (NoSQL). Instead of tables and rows, it stores flexible **Documents** — which look exactly like JavaScript/JSON objects:
+
+```json
+{
+  "_id": "65a1b2c3d4e5f6",
+  "username": "Niv",
+  "email": "niv@test.com",
+  "password": "$2a$10$hashed...",
+  "createdAt": "2026-03-16T00:00:00Z"
+}
+```
+
+Documents are grouped into **Collections** (the equivalent of tables). A `users` collection holds User documents. An `images` collection holds Image documents.
+
+### 6. What is an ODM? (Mongoose)
+While MongoDB is flexible, that flexibility can be dangerous — without rules, anyone could save a user without an email, or with a number instead of a string for the username.
+
+**Mongoose** is an **Object Data Modeling (ODM)** library. It sits between your Express code and MongoDB and enforces strict rules called **Schemas**:
+
+```javascript
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, 'Username is required'],
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: 6,
+    select: false, // Never return password in queries by default!
+  },
+}, { timestamps: true });
+
+module.exports = mongoose.model('User', userSchema);
+```
+
+Once you define a schema, Mongoose gives you powerful query methods:
+```javascript
+// Create a new user document
+const user = await User.create({ username: 'Niv', email: 'niv@test.com', password: 'secret123' });
+
+// Find a user by email
+const foundUser = await User.findOne({ email: 'niv@test.com' });
+
+// Find a user by ID
+const userById = await User.findById('65a1b2c3d4e5f6');
+```
+
+> **⚠️ IMPORTANT:** In this project, we do NOT use `unique: true` or `index: true` in our schemas. Instead, we handle duplicate checking **manually** in our controllers using `User.findOne()` before creating a new document. This teaches you how validation really works under the hood!
+
+### 7. User Authentication with bcrypt
+Never, ever, **EVER** save a plain-text password in your database. If your database is compromised, every single user is instantly hacked.
+
+We use **bcryptjs** to "hash" passwords — a one-way mathematical transformation:
+
+```javascript
+const bcrypt = require('bcryptjs');
+
+// Hashing a password (during registration)
+const salt = await bcrypt.genSalt(10);               // Generate random salt
+const hashedPassword = await bcrypt.hash('myPassword123', salt);
+// hashedPassword → "$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q..."
+
+// Comparing passwords (during login)
+const isMatch = await bcrypt.compare('myPassword123', hashedPassword);
+// isMatch → true
+```
+
+In our Mongoose schema, we use a **pre-save hook** so hashing happens automatically before any User document is saved to the database. You will implement this in `User.js`!
+
+### 8. JSON Web Tokens (JWT)
+HTTP is **stateless** — the server has amnesia. It forgets who you are the instant it finishes responding. So how do we keep users "logged in" across multiple requests?
+
+**JSON Web Tokens (JWT)** are cryptographically signed strings that encode a user's identity:
+
+```javascript
+const jwt = require('jsonwebtoken');
+
+// SIGNING a token (after successful login/register)
+const token = jwt.sign(
+  { id: user._id },                    // Payload: the user's database ID
+  'my_secret_key',                     // Secret key (keep this hidden!)
+  { expiresIn: '30d' }                 // Token expires in 30 days
+);
+
+// VERIFYING a token (in the auth middleware)
+const decoded = jwt.verify(token, 'my_secret_key');
+// decoded → { id: '65a1b2c3d4e5f6', iat: 1710..., exp: 1713... }
+```
+
+**The Flow:**
+1. User registers/logs in → Server generates a JWT and sends it back
+2. Frontend saves the JWT in `localStorage`
+3. For every protected request, the frontend includes: `Authorization: Bearer <token>`
+4. The `protect` middleware (`auth.js`) extracts the token, verifies it, finds the user, and attaches `req.user`
+5. The controller can now access `req.user._id` to know exactly who is making the request
+
+### 9. Data Isolation (Tenant Privacy)
+A real application is **useless** if User A can see User B's private photos! When fetching images, we MUST filter by the logged-in user's ID:
+
+```javascript
+// ❌ WRONG — returns EVERYONE's images!
+const images = await Image.find({});
+
+// ✅ CORRECT — returns only THIS user's images!
+const images = await Image.find({ userId: req.user._id });
+```
+
+This is called **Tenant Isolation** — each user is a "tenant" who can only access their own data.
 
 ---
 
-## 🚀 Getting Started
+## 💻 Environment Setup
 
-To run this complete architecture on your local machine, follow these exact steps.
+### 1. The "Magic" Command (MongoDB)
+Before your Node.js application can save users, it needs a database. We use MongoDB hosted inside a Docker container.
 
-### Prerequisites
-1. **Windows Subsystem for Linux (WSL)** installed.
-2. **Docker Desktop** installed and integrated with your WSL distribution.
-3. **Node.js** installed within your Ubuntu/WSL environment (v18+ recommended).
-
-### 1. Spin up the Infrastructure
-This project relies on four separate background services. We use Docker Compose to spin them all up instantly without needing to install the software directly on your machine.
-
-Open an Ubuntu terminal in this project root and run:
+Open a WSL terminal at the root of the project and run:
 ```bash
-docker compose up -d
+docker compose up -d db
 ```
-*Note: This will download and start MongoDB, Redis, RabbitMQ, and MinIO. It also automatically creates the `learning-uploads` bucket with a public read policy so images can be viewed.*
+*(Wait a few seconds for the database to spin up.)*
 
-### 2. Install Dependencies
-You need to install npm packages for both the backend and the frontend.
-
-**Install Backend Dependencies:**
+### 2. Start the Backend API
+Open a second terminal, navigate into `backend/`, install dependencies, and start the dev server:
 ```bash
 cd backend
 npm install
-```
-
-**Install Frontend Dependencies:**
-```bash
-cd ../frontend
-npm install
-```
-
-### 3. Start the Backend Services
-The backend consists of two running processes: the API Server and the Background Worker.
-
-Open a new terminal, navigate to the `backend/` directory, and start the API server:
-```bash
-cd backend
 npm run dev
 ```
-
-Open *another* new terminal, navigate to the `backend/` directory, and start the RabbitMQ worker:
-```bash
-cd backend
-npm run worker
-```
-
-### 4. Start the Frontend Application
-Open a final terminal, navigate to the `frontend/` directory, and start the React app:
-```bash
-cd frontend
-npm run dev
-```
-
-### 5. View the App!
-Navigate to `http://localhost:5173/` in your browser. 
-You can now select an image, upload it, and watch the Full-Stack magic happen!
-1. The frontend sends the image to the backend via POST `/api/images/upload`.
-2. The backend uploads the file stream directly to MinIO.
-3. The backend saves the MinIO URL to MongoDB.
-4. The backend fires a "process-image" message to RabbitMQ.
-5. The backend immediately responds `201 Created` to the frontend.
-6. The frontend fetches the updated gallery grid from the backend (which reads from MongoDB/Redis).
-7. In the background, the Worker consumes the RabbitMQ message and finalizes the processing.
+*(Your API should now be running on port 3000!)*
 
 ---
 
-## 🧪 Testing
-The backend contains a comprehensive Jest test suite using `mongodb-memory-server` and mocked AWS/AMQP interfaces to ensure you can run tests rapidly cleanly without needing the Docker infrastructure running.
+## 🧪 The Assignment: Test-Driven Development (TDD)
+We have provided a robust backend testing suite using **Jest** and **Supertest**. Right now, **19 out of 21 tests fail** because your schemas are empty and controllers return `501 Not Implemented`.
 
-To verify the backend:
+### How to Run Your Assignment:
+Keep your `npm run dev` server running in one terminal. Open a new terminal inside `backend/` and run the TDD Watcher:
 ```bash
 cd backend
-npm test
+npm run test:watch
 ```
 
-## 🔐 Authentication
-This architecture includes full **JWT (JSON Web Token)** Authentication. 
-Before you can upload or view images, you must register a user account.
-1. Open the React frontend (`http://localhost:5173/`).
-2. Click **Register here** to create an account (e.g., `testuser` / `test@example.com` / `password123`).
-3. Your JWT token will be stored securely in localStorage, and the upload gallery flow will unlock automatically!
+Keep your terminal open. Every time you save a file, Jest will instantly re-run the tests. Read the failing error messages closely — they tell you exactly what is missing!
+
+### Final Verification
+Once all backend tests are completely **GREEN**:
+1. Open your React frontend (`cd frontend && npm run dev`).
+2. Navigate to `http://localhost:5173/`.
+3. Register a new account with a username, email, and password.
+4. If your API is built correctly... you will bypass the Auth screen and enter the Travel Memory App!
+5. Upload an image. Refresh the page. If Data Isolation is working, your gallery will persist **only your images**.
+
+**You've officially built a real, functioning Full-Stack application with authentication!** 🎉
+
+Good luck!
