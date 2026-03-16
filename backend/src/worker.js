@@ -33,9 +33,13 @@ const startWorker = async () => {
             status: 'processed',
           });
 
-          // TODO: Invalidate cache for the image owner.
-    // Why? Because the image status has just changed from 'pending' to 'processed'.
-    // If we don't clear the cache, the user will still see 'pending' in their gallery!
+          // Invalidate cache for the image owner (boilerplate provided)
+          const image = await Image.findById(data.imageId);
+          if (image) {
+            const redis = getRedisClient();
+            const cacheKey = `images:${image.userId}:/api/images`;
+            await redis.del(cacheKey);
+          }
 
           console.log(`Image ${data.imageId} processed successfully`);
           channel.ack(msg);

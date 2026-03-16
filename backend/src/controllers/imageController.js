@@ -44,9 +44,10 @@ const uploadImage = async (req, res, next) => {
       action: 'process-image',
     });
 
-    // TODO: Invalidate the Redis cache for this user!
-    // Why? Because we just uploaded a new image, so the old list of images is stale.
-    // HINT: Delete the key associated with this user's image gallery list.
+    // Clear user's image list cache after uploading a new image
+    const redis = getRedisClient();
+    const cacheKey = `images:${userId}:/api/images`;
+    await redis.del(cacheKey);
 
     res.status(201).json(image);
   } catch (err) {
@@ -58,7 +59,24 @@ const uploadImage = async (req, res, next) => {
 // @route   GET /api/images
 const getImages = async (req, res, next) => {
   try {
-    const images = await Image.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const userId = req.user._id;
+    const cacheKey = `images:${userId}:/api/images`;
+    const redis = getRedisClient();
+
+    // TODO: Step 1 - Try to fetch data from Redis using the cacheKey
+    // const cachedImages = await ...
+
+    // if (cachedImages) {
+    //   console.log('Serving from cache');
+    //   return res.json(JSON.parse(cachedImages));
+    // }
+
+    console.log('Serving from MongoDB');
+    const images = await Image.find({ userId }).sort({ createdAt: -1 });
+
+    // TODO: Step 2 - Before sending the response, store the images in Redis
+    // HINT: Use redis.setex(key, seconds, value). Convert images array to a JSON string!
+    
     res.json(images);
   } catch (err) {
     next(err);
