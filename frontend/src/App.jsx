@@ -7,7 +7,7 @@ import Gallery from './components/Gallery';
 import './index.css';
 
 // TODO: The backend API URL is http://localhost:3000/api
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5000/api';
 
 function App() {
   // TODO: Add state variables for `images` (array).
