@@ -6,7 +6,7 @@ import Upload from './components/Upload';
 import Gallery from './components/Gallery';
 import './index.css';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:3000/api';
 
 function App() {
   const [images, setImages] = useState([]);
