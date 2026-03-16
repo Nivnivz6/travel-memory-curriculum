@@ -21,10 +21,11 @@ function Gallery({ images }) {
           <div className="image-wrapper">
             <img src={img.s3Url} alt={img.filename} className="gallery-img" />
           </div>
-          <div className="image-info">
-             <p className="image-name">{img.filename}</p>
-             <span className={`status-badge ${img.status}`}>{img.status}</span>
-          </div>
+//           <div className="image-info">
+//              <p className="image-name">{img.filename}</p>
+//              {/* TODO: Render a status badge using the `img.status` value */}
+//              <span className={`status-badge ${img.status}`}>{img.status}</span>
+//           </div>
         </div>
       */}
 

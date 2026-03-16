@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // TODO: The backend API URL is http://localhost:3000/api
 const API_URL = 'http://localhost:3000/api';
 
-function Upload({ images, setImages, logout }) {
+function Upload({ images, setImages, logout, token }) {
   // TODO: Add `file` (single file object or null), `loading` (boolean), `error` (string or null), and `success` (string).
 
   const handleFileChange = (e) => {
@@ -29,7 +29,8 @@ function Upload({ images, setImages, logout }) {
       <form className="upload-form" onSubmit={handleUpload}>
         <div className="file-input-wrapper">
           <label htmlFor="file-upload" className="file-input-label">
-            {/* TODO: Change this prompt if `file` already exists in state */}
+            {/* TODO: Change this prompt if `file` already exists in state. 
+                Example: {file ? 'Click to change file' : 'Click to select...'} */}
             Click to select an image or drag and drop
           </label>
           <input 
