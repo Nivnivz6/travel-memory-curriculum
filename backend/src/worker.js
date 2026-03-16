@@ -21,31 +21,27 @@ const startWorker = async () => {
 
     channel.consume(QUEUE_NAME, async (msg) => {
       if (msg) {
-        const data = JSON.parse(msg.content.toString());
-        console.log('Received message:', data);
+        // TODO: Step 1 - Parse the message content back into a JavaScript object
+        // const data = ...
 
         try {
-          // Simulate image processing (e.g., resizing, thumbnail generation)
-          console.log(`Processing image: ${data.imageId}`);
+          // TODO: Step 2 - "Process" the image.
+          // In a real app, this is where you would resize images or detect objects using AI.
+          // For now, just console.log the imageId being processed.
 
-          // Update image status in MongoDB
-          await Image.findByIdAndUpdate(data.imageId, {
-            status: 'processed',
-          });
+          // TODO: Step 3 - Update the image status in MongoDB to 'processed'
+          // HINT: Use Image.findByIdAndUpdate()
 
-          // Invalidate cache for the image owner
-          const image = await Image.findById(data.imageId);
-          if (image) {
-            const redis = getRedisClient();
-            const cacheKey = `images:${image.userId}:/api/images`;
-            await redis.del(cacheKey);
-          }
+          // TODO: Step 4 - Invalidate the Redis cache for the image owner.
+          // Why? So the user sees their 'processed' status immediately on the next refresh!
 
-          console.log(`Image ${data.imageId} processed successfully`);
-          channel.ack(msg);
+          // TODO: Step 5 - Acknowledge the message (ack) to tell RabbitMQ it's done!
+          // channel.ack(msg);
         } catch (err) {
           console.error('Error processing message:', err.message);
-          channel.nack(msg, false, true); // Requeue the message
+          // TODO: Step 6 - If something goes wrong, "Reject" or "Nack" the message
+          // so it goes back into the queue for another try.
+          // channel.nack(msg, false, true);
         }
       }
     });
