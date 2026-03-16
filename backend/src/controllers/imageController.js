@@ -1,6 +1,7 @@
 const Image = require('../models/Image');
 const { uploadFile } = require('../services/s3Service');
 const { publishMessage } = require('../services/queueService');
+const { getRedisClient } = require('../config/redis');
 
 // @desc    Upload an image
 // @route   POST /api/images/upload
@@ -42,6 +43,11 @@ const uploadImage = async (req, res, next) => {
       s3Key: s3Result.key,
       action: 'process-image',
     });
+
+    // Invalidate the cache for this user
+    const redis = getRedisClient();
+    const cacheKey = `images:${userId}:/api/images`;
+    await redis.del(cacheKey);
 
     res.status(201).json(image);
   } catch (err) {

@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const amqplib = require('amqplib');
 const Image = require('./models/Image');
+const { getRedisClient } = require('./config/redis');
 
 const QUEUE_NAME = 'image-processing';
 
@@ -31,6 +32,14 @@ const startWorker = async () => {
           await Image.findByIdAndUpdate(data.imageId, {
             status: 'processed',
           });
+
+          // Invalidate cache for the image owner
+          const image = await Image.findById(data.imageId);
+          if (image) {
+            const redis = getRedisClient();
+            const cacheKey = `images:${image.userId}:/api/images`;
+            await redis.del(cacheKey);
+          }
 
           console.log(`Image ${data.imageId} processed successfully`);
           channel.ack(msg);
