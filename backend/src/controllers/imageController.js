@@ -9,11 +9,11 @@ const uploadImage = async (req, res, next) => {
     // TODO: 1. Check that a file was uploaded: if (!req.file) return error 400.
     // TODO: 2. Check that req.user exists (the Auth middleware sets this).
     // TODO: 3. Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
-    // TODO: 4. Create an Image document in MongoDB with:
-    //          { userId: req.user._id, filename: req.file.originalname, s3Key: s3Result.Key, s3Url: s3Result.Location }
-    // TODO: 5. Publish a background message to RabbitMQ:
-    //          await publishMessage('image-processing', { imageId: image._id, s3Key: s3Result.Key, action: 'process-image' });
-    // TODO: 6. Respond with 201 and the saved image document.
+    // TODO: 4. Create an Image document in MongoDB. VERY IMPORTANT:
+    //          Set the `status` field to 'pending'. This ensures that the image
+    //          PERSISTS in the database even before it is processed!
+    //          { userId: req.user._id, filename: req.file.originalname, s3Key: s3Result.Key, s3Url: s3Result.Location, status: 'pending' }
+    // TODO: 5. Respond with 201 and the saved image document.
     return res.status(501).json({ error: 'Not implemented' });
   } catch (err) {
     next(err);
