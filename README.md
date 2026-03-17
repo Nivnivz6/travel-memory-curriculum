@@ -120,25 +120,6 @@ const response = await axios.get('http://localhost:3000/api/images', {
 
 This ensures the backend queries the database using your specific User ID (`Image.find({ userId: req.user._id })`), meaning you ONLY get your personal images returned. This critical security concept is called **Tenant Isolation**.
 
-## 💻 Prerequisites & Environment Setup
-If you are on Windows, you **MUST** use WSL (Windows Subsystem for Linux) to ensure a standard Unix-like development environment.
-
-### 1. Install WSL (Windows 11)
-Open **PowerShell as an Administrator** and run:
-```powershell
-wsl --install
-```
-Restart your computer. Upon reboot, an Ubuntu terminal will open. Create your UNIX username and password.
-
-### 2. Docker Desktop
-1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
-2. In Docker Settings -> Resources -> WSL Integration, ensure integration is enabled for your default WSL distro (`Ubuntu`).
-
-### 3. VS Code Setup
-1. Open VS Code in Windows.
-2. Install the **WSL extension** by Microsoft.
-3. Open your project folder using the bottom left green `><` button -> "Reopen in WSL".
-
 ## 🧪 Test-Driven Development (TDD)
 We have provided a robust frontend testing suite using **Vitest** and **React Testing Library**. Right now, all tests fail because `App.jsx` is hollowed out.
 
