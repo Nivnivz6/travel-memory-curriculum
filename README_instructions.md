@@ -44,12 +44,12 @@ Are you ready for Day 1? Run these commands in your terminal to begin:
 1. **Clone the repository** (if you haven't already):
    ```bash
    git clone <repository-url>
-   cd learningStack
+   cd travel-memory-curriculum
    ```
 
 2. **Move to your first lesson**:
    ```bash
-   git checkout travel-memory-curriculum
+   git checkout pahse 1
    ```
 
 3. **Begin**: Open the `README.md` file in the root directory while on the `phase-1` branch to read your first assignment!
