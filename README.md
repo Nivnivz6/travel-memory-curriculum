@@ -1,4 +1,4 @@
-# Travel Memory App — The Master Build (Phase 0)
+# Travel Memory App — The Master Build (Phase 0) 
 
 Welcome to the definitive, complete architecture of the Travel Memory App! This branch (`main`) contains the fully solved, fully implemented Full-Stack application.
 
