@@ -49,7 +49,7 @@ Are you ready for Day 1? Run these commands in your terminal to begin:
 
 2. **Move to your first lesson**:
    ```bash
-   git checkout phase-1
+   git checkout travel-memory-curriculum
    ```
 
 3. **Begin**: Open the `README.md` file in the root directory while on the `phase-1` branch to read your first assignment!
