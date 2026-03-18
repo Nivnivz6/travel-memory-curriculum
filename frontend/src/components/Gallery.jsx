@@ -1,6 +1,43 @@
 import React from 'react';
 
+function image({images}){
+  if (images.length > 0)
+{
+    return (
+         <div className="empty-state">
+          <p>No images yet. Start writing code to fetch and display them!</p>
+      </div>
+  )
+}
+return(
+<div key={img._id} className="gallery-item">
+          <div className="image-wrapper">
+            <img src={img.s3Url} alt={img.filename} className="gallery-img" />
+          </div>
+          <div className="image-info">
+             <p className="image-name">{img.filename}</p>
+             // TODO: (img.status badge logic goes here) 
+             <span className={`status-badge ${img.status}`}>{img.status}</span>
+          </div>
+        </div>
+)
+
+}
+
+
+
 function Gallery({ images }) {
+  return (
+    <section className="gallery-section">
+      <h2>Your Uploads</h2>
+      {image(images)}
+
+    </section>
+  );
+}
+
+
+function Gallery2({ images }) {
   return (
     <section className="gallery-section">
       <h2>Your Uploads</h2>
@@ -10,6 +47,8 @@ function Gallery({ images }) {
         CRITICAL: Remember to attach your JWT token in the Authorization header 
         (in your App.jsx fetch request) so the backend knows who you are! 
       */}
+     
+        
       {/* If empty, render this empty-state div. */}
       {/* If it contains images, map through the array and render a `.gallery-item` for each image. */}
       <div className="empty-state">

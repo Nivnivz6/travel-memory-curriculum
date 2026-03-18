@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
 
 // TODO: The backend API URL is http://localhost:3000/api
 const API_URL = 'http://localhost:3000/api';
 
 function Register({ setToken, setUser, toggleMode }) {
   // TODO: Add a `authForm` state to manage `username`, `email` and `password` inputs.
+  const [authForm, setAuthForm] = useState('');
+  
+
 
   const handleAuthChange = (e) => {
     // TODO: Update the `authForm` state whenever an input field changes.
+      setAuthForm(e.target.value)
+
   };
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     // TODO: Send a POST request to `/api/auth/register`.
+   
+    const response = await axios.post('/api/auth/register', {
+    email: 'test@test.com',
+    password: 'password123'
+  });
     // On success:
     // 1. Save the returned token and user object to localStorage.
     // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
