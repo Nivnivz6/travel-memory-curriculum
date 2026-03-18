@@ -19,7 +19,7 @@ describe('Travel Memory App Authentication Flow', () => {
     expect(screen.getByText(/Travel Memory App/i)).toBeInTheDocument();
     
     // It should render the Login Form initially
-    expect(screen.getByText(/Welcome Back|Login/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Welcome Back/i })).toBeInTheDocument();
     
     // Email and Password inputs should be visible
     expect(screen.getByPlaceholderText(/Email Address/i)).toBeInTheDocument();
