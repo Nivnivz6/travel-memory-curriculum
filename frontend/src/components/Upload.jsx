@@ -36,21 +36,21 @@ function Upload({ images, setImages, logout, token }) {
     // 4. Important: The response contains the saved image object. Prepend it directly 
     //    into your `images` array (using the `setImages` prop) so it renders instantly!
     // 5. Remember to attach your JWT token in the Authorization header so the backend knows who you are!
-    try {
-      const response = await axios.post(`${API_URL}/images/upload`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+    const response = await axios.post(`${API_URL}/images/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
+    if (response.ok) {
       setSuccess('Uploded the image successfully!');
       setImages([...images, response.data]);
       setFile(null);
     }
 
     // 6. If returning a 401 error, call `logout()`.
-    catch (error) {
-      setError(error.message);
+    else {
+      setError(response.data)
       if (response.status == 401) {
         logout();
       }

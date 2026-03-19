@@ -39,7 +39,7 @@ function Login({ setToken, setUser, toggleMode }) {
       const user = response.data.user
 
       localStorage.setItem('token', token)
-      localStorage.setItem('user', user)
+      localStorage.setItem('user', JSON.stringify(user))
 
       setToken(token)
       setUser(user)
