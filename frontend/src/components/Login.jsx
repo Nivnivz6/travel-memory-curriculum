@@ -9,16 +9,16 @@ function Login({ setToken, setUser, toggleMode }) {
   const [isLoading, setIsLoading] = useState(false)
 
   const [authForm, setAuthForm] = useState({
-    'email': '', 
+    'email': '',
     'password': ''
   })
-  // Add a `authForm` state to manage `email` and `password` inputs. 
+  // `authForm` state to manage `email` and `password` inputs. 
 
   const handleAuthChange = (e) => {
     const name = e.target.name
     const value = e.target.value
-    
-    setAuthForm(prev => ({...prev, [name]: value}))
+
+    setAuthForm(prev => ({ ...prev, [name]: value }))
     // Update the `authForm` state whenever an input field changes.
   };
 
@@ -31,21 +31,21 @@ function Login({ setToken, setUser, toggleMode }) {
     // On failure: catch the error and display it to the user.
 
     setIsLoading(true)
-    
+
     try {
-    const response = await axios.post(`${API_URL}/auth/login`, authForm);
+      const response = await axios.post(`${API_URL}/auth/login`, authForm);
 
-    const token = response.data.token
-    const user = response.data.name
+      const token = response.data.token
+      const user = response.data.user
 
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', user)
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', user)
 
-    setToken(token)
-    setUser(user)
+      setToken(token)
+      setUser(user)
     }
 
-    catch(error) {
+    catch (error) {
       console.error('An error occurred:', error.message);
       setError(error)
     }
@@ -61,28 +61,28 @@ function Login({ setToken, setUser, toggleMode }) {
       {/* If there is an error, render it conditionally here inside a div with className="message error" */}
 
       <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email Address" 
+        <input
+          type="email"
+          name="email"
+          placeholder="Email Address"
           value={authForm.email} /* Bind this to state */
           onChange={handleAuthChange}
-          required 
+          required
           style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ccc' }}
         />
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Password" 
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
           value={authForm.password} /* Bind this to state */
           onChange={handleAuthChange}
-          required 
+          required
           style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ccc' }}
         />
-        
+
         <button
-          type="submit" 
-          className="btn-upload" 
+          type="submit"
+          className="btn-upload"
           disabled={isLoading} /* Disable if loading */
           style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
         >
@@ -92,8 +92,8 @@ function Login({ setToken, setUser, toggleMode }) {
 
       <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: '#666' }}>
         Don't have an account?{' '}
-        <span 
-          onClick={toggleMode} 
+        <span
+          onClick={toggleMode}
           style={{ color: '#0070f3', cursor: 'pointer', fontWeight: 'bold' }}
         >
           Register here
