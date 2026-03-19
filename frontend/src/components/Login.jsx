@@ -7,16 +7,27 @@ const API_URL = 'http://localhost:3000/api';
 
 function Login({ setToken, setUser, toggleMode }) {
   // TODO: Add a `authForm` state to manage `email` and `password` inputs.
-  const [authForm, setAuthForm] = useState({email:'', password: ''});
+  const [authForm, setAuthForm] = useState({email:"", password: ""});
+  const [errorMsg, setErrorMsg] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAuthChange = (e) => {
     // TODO: Update the `authForm` state whenever an input field changes.
-    const {name, value} = e.target;
+    console.log(authForm)
     setAuthForm((prev) => {
-      return { ...prev, [name]: value}
+      return { ...prev, [e.target.name]: e.target.value}
     });
 
   };
+
+    const handleSubmit= (e) => {
+    // TODO: Update the `authForm` state whenever an input field changes.
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    };
+
+  
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -26,11 +37,19 @@ function Login({ setToken, setUser, toggleMode }) {
       // const {token} = respose.data;
       localStorage.setItem('token', respose.token);
       setToken(respose.token)
-      localStorage.setItem('user', JSON.stringify(response.user));
-      setUser(JSON.stringify(response.user))
+      localStorage.setItem('user', response.user);
+      setUser(response.user)
 
     })
-    .catch(err => console.log(err))
+    .catch(err)
+    {setErrorMsg(e)}
+    if(errorMsg){
+      const error = errorMsg
+      setErrorMsg(null)
+      return <p>{error}</p>
+    }
+
+    
      // On success:
     // 1. Save the returned token and user object to localStorage.
     // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
@@ -52,8 +71,8 @@ function Login({ setToken, setUser, toggleMode }) {
           type="email" 
           name="email" 
           placeholder="Email Address" 
-          value={''} /* TODO: Bind this to state */
           onChange={handleAuthChange}
+          value={authForm.email} /* TODO: Bind this to state */
           required 
           style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ccc' }}
         />
@@ -61,8 +80,8 @@ function Login({ setToken, setUser, toggleMode }) {
           type="password" 
           name="password" 
           placeholder="Password" 
-          value={''} /* TODO: Bind this to state */
           onChange={handleAuthChange}
+          value={authForm.password} /* TODO: Bind this to state */
           required 
           style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ccc' }}
         />
@@ -70,7 +89,8 @@ function Login({ setToken, setUser, toggleMode }) {
         <button 
           type="submit" 
           className="btn-upload" 
-          disabled={false} /* TODO: Disable if loading */
+          onClick={handleSubmit}
+          disabled={isSubmitting} /* TODO: Disable if loading */
           style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
         >
           Login
@@ -87,7 +107,7 @@ function Login({ setToken, setUser, toggleMode }) {
         </span>
       </p>
     </main>
-  );
-}
+  );}
+
 
 export default Login;
