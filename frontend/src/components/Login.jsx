@@ -8,54 +8,37 @@ const API_URL = 'http://localhost:3000/api';
 function Login({ setToken, setUser, toggleMode }) {
   // TODO: Add a `authForm` state to manage `email` and `password` inputs.
   const [authForm, setAuthForm] = useState({email:"", password: ""});
-  const [errorMsg, setErrorMsg] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAuthChange = (e) => {
     // TODO: Update the `authForm` state whenever an input field changes.
-    console.log(authForm)
     setAuthForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value}
     });
 
   };
 
-    const handleSubmit= (e) => {
-    // TODO: Update the `authForm` state whenever an input field changes.
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    };
-
-  
-
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
+        setIsSubmitting(true);
+        e.preventDefault();
     // TODO: Send a POST request to `/api/auth/login`.
-    axios.post('/api/auth/login', {post})
-    .then(respose => {
+      await axios.post('/api/auth/login').then(respose => {
       // const {token} = respose.data;
       localStorage.setItem('token', respose.token);
       setToken(respose.token)
       localStorage.setItem('user', response.user);
       setUser(response.user)
-
-    })
-    .catch(err)
-    {setErrorMsg(e)}
-    if(errorMsg){
-      const error = errorMsg
-      setErrorMsg(null)
-      return <p>{error}</p>
-    }
-
+    }).catch(err=>{
+                  setErrorMsg(err.message)
+                });
+    
+  
     
      // On success:
     // 1. Save the returned token and user object to localStorage.
     // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
     // On failure: catch the error and display it to the user.
-
-
     
   }
     
@@ -65,6 +48,7 @@ function Login({ setToken, setUser, toggleMode }) {
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Welcome Back</h2>
       
       {/* TODO: If there is an error, render it conditionally here inside a div with className="message error" */}
+      <div  class="message error" >{errorMsg && errorMsg}</div> 
 
       <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <input 
@@ -89,12 +73,14 @@ function Login({ setToken, setUser, toggleMode }) {
         <button 
           type="submit" 
           className="btn-upload" 
-          onClick={handleSubmit}
           disabled={isSubmitting} /* TODO: Disable if loading */
           style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
         >
           Login
         </button>
+
+
+
       </form>
 
       <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: '#666' }}>
