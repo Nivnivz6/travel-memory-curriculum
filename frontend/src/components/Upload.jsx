@@ -5,15 +5,24 @@ const API_URL = 'http://localhost:3000/api';
 
 function Upload({ images, setImages, logout, token }) {
   // TODO: Add `file` (single file object or null), `loading` (boolean), `error` (string or null), and `success` (string).
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null);
 
   const handleFileChange = (e) => {
     // TODO: Listen for the file input change and update the `file` state.
+    setFile(e.target.files[0])
   };
 
   const handleUpload = async (e) => {
     e.preventDefault();
     // TODO: Build the image upload logic:
     // 1. Validate a file exists.
+    if (file != nul){
+      const formData = new FormData();
+      formData.append('image', file);
+    }
     // 2. Use `new FormData()` and append the single file under the key 'image'.
     // 3. Send a POST request to `/api/images/upload`.
     // 4. Important: The response contains the saved image object. Prepend it directly 

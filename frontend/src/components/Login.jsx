@@ -23,12 +23,12 @@ function Login({ setToken, setUser, toggleMode }) {
         setIsSubmitting(true);
         e.preventDefault();
     // TODO: Send a POST request to `/api/auth/login`.
-      await axios.post('/api/auth/login').then(respose => {
+      await axios.post('http://localhost:3000/api/auth/login', {email: authForm.email, password: authForm.password }).then(response => {
       // const {token} = respose.data;
-      localStorage.setItem('token', respose.token);
-      setToken(respose.token)
-      localStorage.setItem('user', response.user);
-      setUser(response.user)
+      localStorage.setItem('token', response.data.token);
+      setToken(response.data.token)
+      localStorage.setItem('user', response.data.user);
+      setUser(response.data.user)
     }).catch(err=>{
                   setErrorMsg(err.message)
                 });
