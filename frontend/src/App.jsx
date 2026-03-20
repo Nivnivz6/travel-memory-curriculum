@@ -15,13 +15,28 @@ function App() {
 
   // TODO: Add auth state variables for `token` (string from localStorage),
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
+
+  const [auth, setAuth] = useState({token: localStorage.getItem('token'), user: localStorage.getItem('user'), isLoginMode: true});
   
   // TODO (useEffect): React uses the `useEffect` hook to run side effects (like fetching data from an API) 
   // outside the normal rendering cycle. 
   // Create a `useEffect` hook that listens to the `token` state variable in its dependency array.
   // Inside the hook, check if a `token` exists. If it does, invoke your `fetchImages()` function!
+  
+  useEffect(() => {
+    if (auth.token)
+  fetchImages();
+}, []);
+
 
   const fetchImages = async () => {
+  await axios.get('http://localhost:3000/api/images', {
+  headers: { Authorization: `Bearer ${auth.token}` }
+}).then(response => {
+  setImages([...images, {file: response.data.file, JWTtoken:response.data.token }])
+}).catch(err=>{
+        logout() 
+      });
     // TODO: Write an async function that sends a GET request to `/api/images`.
     // CRITICAL (Data Isolation): When fetching images, the backend MUST know exactly who is asking
     // so it doesn't accidentally return another user's private photos!
@@ -33,11 +48,15 @@ function App() {
 
   const logout = () => {
     // TODO: Implement logout. Clear `localStorage`, nullify `token` and `user` states, and empty the `images` array.
+    localStorage.clear();
+    setImages([{file:'', JWTtoken:''}])
+    setAuth({token: "", user: null , isLoginMode: true})
+
   };
 
   const toggleMode = () => {
     // TODO: Write a small function to toggle the boolean `isLoginMode` 
-  };
+  setAuth((prev) => ({...prev, isLoginMode : (isLoginMode ? false : true) } ));
 
   // ------------------------------------------------------------------------
   // Render Auth View if not logged in

@@ -48,7 +48,7 @@ function Login({ setToken, setUser, toggleMode }) {
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Welcome Back</h2>
       
       {/* TODO: If there is an error, render it conditionally here inside a div with className="message error" */}
-      <div  class="message error" >{errorMsg && errorMsg}</div> 
+      <div>{errorMsg && <div className="message error">{errorMsg}</div>}</div> 
 
       <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <input 
