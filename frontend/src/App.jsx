@@ -11,7 +11,7 @@ const API_URL = 'http://localhost:3000/api';
 
 function App() {
   // TODO: Add state variables for `images` (array).
-  const [images, setImages] = useState([]); // Or stripped, I will rip it out
+  const [images, setImages] = useState([{file:'', JWTtoken:''}]); // Or stripped, I will rip it out
 
   // TODO: Add auth state variables for `token` (string from localStorage),
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
