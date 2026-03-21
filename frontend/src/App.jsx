@@ -16,22 +16,23 @@ function App() {
   // TODO: Add auth state variables for `token` (string from localStorage),
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
 
-  const [auth, setAuth] = useState({token: localStorage.getItem('token'), user: localStorage.getItem('user'), isLoginMode: true});
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(localStorage.getItem('user'));
+  const [isLoginMode, setIsLoginMode] = useState(true);
   
   // TODO (useEffect): React uses the `useEffect` hook to run side effects (like fetching data from an API) 
   // outside the normal rendering cycle. 
   // Create a `useEffect` hook that listens to the `token` state variable in its dependency array.
   // Inside the hook, check if a `token` exists. If it does, invoke your `fetchImages()` function!
-  
+
   useEffect(() => {
-    if (auth.token)
+    if (token)
   fetchImages();
 }, []);
 
-
   const fetchImages = async () => {
   await axios.get('http://localhost:3000/api/images', {
-  headers: { Authorization: `Bearer ${auth.token}` }
+  headers: { Authorization: `Bearer ${token}` }
 }).then(response => {
   setImages([...images, {file: response.data.file, JWTtoken:response.data.token }])
 }).catch(err=>{
@@ -50,13 +51,17 @@ function App() {
     // TODO: Implement logout. Clear `localStorage`, nullify `token` and `user` states, and empty the `images` array.
     localStorage.clear();
     setImages([{file:'', JWTtoken:''}])
-    setAuth({token: "", user: null , isLoginMode: true})
+    setToken("")
+    setUser(null)
+    // setIsLoginMode(true)
+    // setAuth({token: "", user: null , isLoginMode: true})
 
   };
 
   const toggleMode = () => {
     // TODO: Write a small function to toggle the boolean `isLoginMode` 
-  setAuth((prev) => ({...prev, isLoginMode : (isLoginMode ? false : true) } ));
+    setIsLoginMode(isLoginMode ? false : true)
+  };
 
   // ------------------------------------------------------------------------
   // Render Auth View if not logged in
@@ -69,6 +74,8 @@ function App() {
   // TODO: Conditionally render the `<Login />` component or the `<Register />` component
   // based on `isLoginMode`. 
   // Don't forget to pass the `setToken`, `setUser`, and `toggleMode` props!
+
+  if(!token){
   return (
     <div className="container">
       <header className="header">
@@ -76,14 +83,24 @@ function App() {
         <p>Login to upload and share your favorite travel moments</p>
       </header>
 
-      {/* TODO: If isLoginMode is true, render <Login />, otherwise <Register /> */}
+      {/* TODO: If isLoginMode is true, render <Login />, otherwise <Register /> */}       <div>
+     {isLoginMode ?(
+      
       <Login 
-        setToken={() => {}} 
-        setUser={() => {}} 
+        setToken={() => {setToken}} 
+        setUser={() => {setUser}} 
         toggleMode={toggleMode} 
       />
+      ):(
+        <Register
+        setToken={() => {setToken}} 
+        setUser={() => {setUser}} 
+        toggleMode={toggleMode}  />)
+        }
+         </div>
+     
     </div>
-  );
+  );}
 
   // ************************** Main App View **************************
   // TODO: Paste the Travel Memory App Return block here, and bind state correctly.
@@ -98,16 +115,22 @@ function App() {
           style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: '1px solid #ccc', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
         >
           {/* TODO: Render the user's username next to Logout */}
-          Logout
+          Logout {user.name}
         </button>
       </header>
 
       <main>
         {/* TODO: Render the <Upload /> component and pass down `images`, `setImages`, `logout`, and `token` as props */}
-        <Upload token={null} />
+        <Upload
+        images = {images}
+        setImages={() => {setImages}} 
+        logout = {logout}
+        token={token}
+        />
 
         {/* TODO: Render the <Gallery /> component and pass down `images` as a prop */}
-        <Gallery images={[]} />
+        <Gallery
+         images={images} />
       </main>
     </div>
   );
