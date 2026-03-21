@@ -36,22 +36,20 @@ function Upload({ images, setImages, logout, token }) {
     // 4. Important: The response contains the saved image object. Prepend it directly 
     //    into your `images` array (using the `setImages` prop) so it renders instantly!
     // 5. Remember to attach your JWT token in the Authorization header so the backend knows who you are!
-    const response = await axios.post(`${API_URL}/images/upload`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (response.ok) {
+    try {
+      const response = await axios.post(`${API_URL}/images/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setSuccess('Uploded the image successfully!');
       setImages([...images, response.data]);
-      setFile(null);
     }
 
     // 6. If returning a 401 error, call `logout()`.
-    else {
-      setError(response.data)
-      if (response.status == 401) {
+    catch (error) {
+      setError(error)
+      if (error.response.status == 401) {
         logout();
       }
     }
@@ -70,7 +68,7 @@ function Upload({ images, setImages, logout, token }) {
           <label htmlFor="file-upload" className="file-input-label">
             {/* Change this prompt if `file` already exists in state. 
                 Example: {file ? 'Click to change file' : 'Click to select...'} */}
-            {file ? 'click to change file' : 'click to select an image or drag and drop'}
+            {file ? <p>click to change file</p> : <p>click to select an image or drag and drop</p>}
           </label>
           <input
             id="file-upload"

@@ -37,21 +37,20 @@ function App() {
     // header into this GET request.
     // Store the returned array of images into your `images` state.
     // If you receive a 401 status code (Unauthorized), invoke the `logout()` function.
-    const response = await axios.get(`${API_URL}/images`, {
+    try {
+      const response = await axios.get(`${API_URL}/images`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
-    });
-
-    if (response.ok) {
+      });
       setImages(response.data)
-      return
     }
 
-    if (response.status == 401) {
-        logout();
-      }
-    };
+    catch (error) {
+      if (error.response.status == 401)
+        logout()
+    }
+  }
 
   const logout = () => {
     // Implement logout. Clear `localStorage`, nullify `token` and `user` states, and empty the `images` array.
@@ -90,14 +89,14 @@ function App() {
         {isLoginMode ?
           (
             <Login
-              setToken={() => {setToken}}
-              setUser={() => {setUser}}
+              setToken={() => { setToken }}
+              setUser={() => { setUser }}
               toggleMode={toggleMode}
             />
           ) : (
             <Register
-              setToken={() => {setToken}}
-              setUser={() => {setUser}}
+              setToken={() => { setToken }}
+              setUser={() => { setUser }}
               toggleMode={toggleMode}
             />
           )}
@@ -125,7 +124,7 @@ function App() {
 
       <main>
         {/* Render the <Upload /> component and pass down `images`, `setImages`, `logout`, and `token` as props */}
-        <Upload token={token} images={images} setImages={() => {setImages}} logout={logout} />
+        <Upload token={token} images={images} setImages={() => { setImages }} logout={logout} />
 
         {/* Render the <Gallery /> component and pass down `images` as a prop */}
         <Gallery images={images} />
