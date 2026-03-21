@@ -1,29 +1,34 @@
-import React from 'react';
+import React from "react";
 
 function Gallery({ images }) {
   return (
     <section className="gallery-section">
       <h2>Your Uploads</h2>
       <div>
-      {images.length > 0 ?(
-      <div className="empty-state">
-          <p>No images yet. Start writing code to fetch and display them!</p>
-      </div>
-      ):(
-      images.map(img=>(
-      <div key={img._id} className="gallery-item">
-          <div className="image-wrapper">
-            <img src={img.s3Url} alt={img.filename} className="gallery-img" />
+        {images.length > 0 ? (
+          <div className="empty-state">
+            <p>No images yet. Start writing code to fetch and display them!</p>
           </div>
-          <div className="image-info">
-             <p className="image-name">{img.filename}</p>
-             // TODO: (img.status badge logic goes here) 
-             <span className={`status-badge ${img.status}`}>{img.status}</span>
-
-          </div>
-        </div>
-      )))}
-
+        ) : (
+          images.map((img) => (
+            <div key={img._id} className="gallery-item">
+              <div className="image-wrapper">
+                <img
+                  src={img.s3Url}
+                  alt={img.filename}
+                  className="gallery-img"
+                />
+              </div>
+              <div className="image-info">
+                <p className="image-name">{img.filename}</p>
+                // TODO: (img.status badge logic goes here)
+                <span className={`status-badge ${img.status}`}>
+                  {img.status}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       {/* 
         TODO: Check if the `images` array passed via props is empty. 
@@ -48,7 +53,6 @@ function Gallery({ images }) {
           </div>
         </div>
       */}
-
     </section>
   );
 }
