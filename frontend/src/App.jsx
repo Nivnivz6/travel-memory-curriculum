@@ -24,9 +24,7 @@ function App() {
   // outside the normal rendering cycle.
   // Create a `useEffect` hook that listens to the `token` state variable in its dependency array.
   // Inside the hook, check if a `token` exists. If it does, invoke your `fetchImages()` function!
-  useEffect(() => {
-    if (token) fetchImages();
-  }, [token]);
+  useEffect(() => {if (token) fetchImages();}, [token]);
 
   // TODO: Write an async function that sends a GET request to `/api/images`.
   const fetchImages = async () => {
@@ -40,10 +38,10 @@ function App() {
       })
       // Store the returned array of images into your `images` state.
       .then((response) => {
-        setImages([...images, response.data]);
+        setImages(response.data);
       })
       // If you receive a 401 status code (Unauthorized), invoke the `logout()` function.
-      .catch((err) => {
+      .catch(() => {
         logout();
       });
   };
@@ -58,7 +56,7 @@ function App() {
 
   const toggleMode = () => {
     // TODO: Write a small function to toggle the boolean `isLoginMode`
-    setIsLoginMode(isLoginMode ? false : true);
+    setIsLoginMode(!isLoginMode);
   };
 
   // ------------------------------------------------------------------------

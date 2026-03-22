@@ -41,16 +41,18 @@ function Register({ setToken, setUser, toggleMode }) {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
 
-        var userObject = {
+        let userObject = {
           username: response.data.username,
           id: response.data._id,
           email: response.data.email,
         };
         localStorage.setItem("user", JSON.stringify(userObject));
         setUser(userObject);
+        setIsSubmitting(false);
       })
       .catch((err) => {
         setErrorMsg(err.message);
+        setIsSubmitting(false);
       });
   };
 

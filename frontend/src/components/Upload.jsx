@@ -20,7 +20,7 @@ function Upload({ images, setImages, logout, token }) {
     e.preventDefault();
     // TODO: Build the image upload logic:
     // 1. Validate a file exists.
-    if (file != nul) {
+    if (file != null) {
       // 2. Use `new FormData()` and append the single file under the key 'image'.
       const formData = new FormData();
       formData.append("image", file);
@@ -37,12 +37,16 @@ function Upload({ images, setImages, logout, token }) {
         // 5. Remember to attach your JWT token in the Authorization header so the backend knows who you are!
         .then((response) => {
           setImages([...images, response.data]);
-          setSuccess("sucuss");
+          setSuccess("success upload");
+          setLoading(false);
         })
         // 6. If returning a 401 error, call `logout()`.
         .catch((err) => {
           setError(err);
-          logout();
+          if (err.response.status === 401) {
+            logout();
+          }
+          setLoading(false);
         });
     }
 
