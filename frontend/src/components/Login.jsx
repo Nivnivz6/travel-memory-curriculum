@@ -6,7 +6,11 @@ const API_URL = "http://localhost:3000/api";
 
 function Login({ setToken, setUser, toggleMode }) {
   // TODO: Add a `authForm` state to manage `email` and `password` inputs.
-  const [authForm, setAuthForm] = useState({ email: "", password: "" });
+  const [authForm, setAuthForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [errorMsg, setErrorMsg] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,13 +25,16 @@ function Login({ setToken, setUser, toggleMode }) {
     setIsSubmitting(true);
     e.preventDefault();
     // TODO: Send a POST request to `/api/auth/login`.
+    // On success:
+    // 1. Save the returned token and user object to localStorage.
+    // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
+    // On failure: catch the error and display it to the user.
     await axios
-      .post("http://localhost:3000/api/auth/login", {
+      .post(API_URL + "/auth/login", {
         email: authForm.email,
         password: authForm.password,
       })
       .then((response) => {
-        // const {token} = respose.data;
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
         localStorage.setItem("user", response.data.user);
@@ -36,11 +43,6 @@ function Login({ setToken, setUser, toggleMode }) {
       .catch((err) => {
         setErrorMsg(err.message);
       });
-
-    // On success:
-    // 1. Save the returned token and user object to localStorage.
-    // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
-    // On failure: catch the error and display it to the user.
   };
 
   return (

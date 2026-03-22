@@ -11,7 +11,7 @@ const API_URL = "http://localhost:3000/api";
 
 function App() {
   // TODO: Add state variables for `images` (array).
-  const [images, setImages] = useState([{ file: "", JWTtoken: "" }]); // Or stripped, I will rip it out
+  const [images, setImages] = useState([]); // Or stripped, I will rip it out
 
   // TODO: Add auth state variables for `token` (string from localStorage),
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
@@ -24,42 +24,36 @@ function App() {
   // outside the normal rendering cycle.
   // Create a `useEffect` hook that listens to the `token` state variable in its dependency array.
   // Inside the hook, check if a `token` exists. If it does, invoke your `fetchImages()` function!
-
   useEffect(() => {
     if (token) fetchImages();
-  }, []);
+  }, [token]);
 
+  // TODO: Write an async function that sends a GET request to `/api/images`.
   const fetchImages = async () => {
-    await axios
-      .get("http://localhost:3000/api/images", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setImages([
-          ...images,
-          { file: response.data.file, JWTtoken: response.data.token },
-        ]);
-      })
-      .catch((err) => {
-        logout();
-      });
-    // TODO: Write an async function that sends a GET request to `/api/images`.
     // CRITICAL (Data Isolation): When fetching images, the backend MUST know exactly who is asking
     // so it doesn't accidentally return another user's private photos!
     // Therefore, you MUST configure Axios here to inject the `Authorization: Bearer <token>`
     // header into this GET request.
-    // Store the returned array of images into your `images` state.
-    // If you receive a 401 status code (Unauthorized), invoke the `logout()` function.
+    await axios
+      .get(API_URL + "/images", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      // Store the returned array of images into your `images` state.
+      .then((response) => {
+        setImages([...images, response.data]);
+      })
+      // If you receive a 401 status code (Unauthorized), invoke the `logout()` function.
+      .catch((err) => {
+        logout();
+      });
   };
 
   const logout = () => {
     // TODO: Implement logout. Clear `localStorage`, nullify `token` and `user` states, and empty the `images` array.
     localStorage.clear();
-    setImages([{ file: "", JWTtoken: "" }]);
+    setImages([]);
     setToken("");
     setUser(null);
-    // setIsLoginMode(true)
-    // setAuth({token: "", user: null , isLoginMode: true})
   };
 
   const toggleMode = () => {
@@ -136,7 +130,7 @@ function App() {
           }}
         >
           {/* TODO: Render the user's username next to Logout */}
-          Logout {user.name}
+          Logout {user.username}
         </button>
       </header>
 

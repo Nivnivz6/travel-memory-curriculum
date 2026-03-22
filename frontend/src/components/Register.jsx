@@ -11,6 +11,7 @@ function Register({ setToken, setUser, toggleMode }) {
     email: "",
     password: "",
   });
+
   const [errorMsg, setErrorMsg] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,11 +25,15 @@ function Register({ setToken, setUser, toggleMode }) {
   const handleAuthSubmit = async (e) => {
     setIsSubmitting(true);
     e.preventDefault();
-    // TODO: Send a POST request to `/api/auth/login`.
+    // TODO: Send a POST request to `/api/auth/register`.
+    // On success:
+    // 1. Save the returned token and user object to localStorage.
+    // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
+    // On failure: catch the error and display it to the user.
+  
     await axios
-      .post("http://localhost:3000/api/auth/register")
-      .then((respose) => {
-        // const {token} = respose.data;
+      .post(API_URL+"/auth/register")
+      .then((response) => {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
         localStorage.setItem("user", response.data.user);
@@ -39,13 +44,6 @@ function Register({ setToken, setUser, toggleMode }) {
       });
   };
 
-    // TODO: Send a POST request to `/api/auth/register`.
-
-    // On success:
-    // 1. Save the returned token and user object to localStorage.
-    // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
-    // On failure: catch the error and display it to the user.
-  
 
   return (
     <main
