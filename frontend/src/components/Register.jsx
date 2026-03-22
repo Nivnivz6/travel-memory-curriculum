@@ -32,7 +32,11 @@ function Register({ setToken, setUser, toggleMode }) {
     // On failure: catch the error and display it to the user.
 
     await axios
-      .post(API_URL + "/auth/register")
+      .post(API_URL + "/auth/register", {
+        username: authForm.username,
+        email: authForm.email,
+        password: authForm.password,
+      })
       .then((response) => {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
