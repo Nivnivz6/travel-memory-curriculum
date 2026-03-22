@@ -84,22 +84,14 @@ function App() {
         <div>
           {isLoginMode ? (
             <Login
-              setToken={() => {
-                setToken;
-              }}
-              setUser={() => {
-                setUser;
-              }}
+              setToken={setToken}
+              setUser={setUser}
               toggleMode={toggleMode}
             />
           ) : (
             <Register
-              setToken={() => {
-                setToken;
-              }}
-              setUser={() => {
-                setUser;
-              }}
+              setToken={setToken}
+              setUser={setUser}
               toggleMode={toggleMode}
             />
           )}
@@ -138,9 +130,7 @@ function App() {
         {/* TODO: Render the <Upload /> component and pass down `images`, `setImages`, `logout`, and `token` as props */}
         <Upload
           images={images}
-          setImages={() => {
-            setImages;
-          }}
+          setImages={setImages}
           logout={logout}
           token={token}
         />
