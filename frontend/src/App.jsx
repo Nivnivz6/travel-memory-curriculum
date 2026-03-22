@@ -17,7 +17,7 @@ function App() {
   // `user` (object from localStorage), and `isLoginMode` (boolean, defaults to true)
 
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useState(localStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   // TODO (useEffect): React uses the `useEffect` hook to run side effects (like fetching data from an API)

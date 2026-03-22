@@ -26,7 +26,7 @@ function Login({ setToken, setUser, toggleMode }) {
     e.preventDefault();
     // TODO: Send a POST request to `/api/auth/login`.
     // On success:
-    // 1. Save the returned token and user object to localStorage.
+    // 1. Save the returned token to localStorage and the returned usermame, _id and email to an object named user on localStorage.
     // 2. Call `setToken` and `setUser` passed from App.jsx to update the global app state.
     // On failure: catch the error and display it to the user.
     await axios
@@ -37,8 +37,14 @@ function Login({ setToken, setUser, toggleMode }) {
       .then((response) => {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
-        localStorage.setItem("user", response.data.user);
-        setUser(response.data.user);
+
+        var userObject = {
+          username: response.data.username,
+          id: response.data._id,
+          email: response.data.email,
+        };
+        localStorage.setItem("user", JSON.stringify(userObject));
+        setUser(userObject);
       })
       .catch((err) => {
         setErrorMsg(err.message);
