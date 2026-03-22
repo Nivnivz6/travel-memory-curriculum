@@ -48,7 +48,7 @@ function Upload({ images, setImages, logout, token }) {
 
     // 6. If returning a 401 error, call `logout()`.
     catch (error) {
-      setError(error)
+      setError(error.message)
       if (error.response.status == 401) {
         logout();
       }

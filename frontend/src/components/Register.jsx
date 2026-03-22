@@ -47,7 +47,6 @@ function Register({ setToken, setUser, toggleMode }) {
     }
 
     catch (error) {
-      console.error('An error occurred:', error.message);
       setError(error)
     }
 
