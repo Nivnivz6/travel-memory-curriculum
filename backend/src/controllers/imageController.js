@@ -17,7 +17,8 @@ const uploadImage = async (req, res, next) => {
     }
 
     // Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
-    const s3Result = await uploadFile(req.file);
+    const s3Result = await uploadFile(req.file); // in s3Service
+    await publishMessage("image") // in queueService
 
     // Create an Image document in MongoDB. VERY IMPORTANT:
     //          Set the `status` field to 'pending'. This ensures that the image
