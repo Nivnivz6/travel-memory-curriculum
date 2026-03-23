@@ -14,9 +14,9 @@ const generateToken = (id) => {
 exports.registerUser = async (req, res, next) => {
   try {
     // TODO: 1. Extract `username`, `email`, and `password` from `req.body`.
-    const username = req.username;
-    const email = req.email;
-    const password = req.password;
+    const username = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
 
     // TODO: 2. Validate that all three fields exist. If any are missing, return a 400 status:
     //          return res.status(400).json({ error: 'Please provide all fields' });
@@ -61,8 +61,8 @@ exports.registerUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   try {
     // TODO: 1. Extract `email` and `password` from `req.body`.
-    const email = req.email;
-    const password = req.password;
+    const email = req.body.email;
+    const password = req.body.password;
     // TODO: 2. Validate both fields exist. Return 400 if missing.
 
     if (!email || !password) {
