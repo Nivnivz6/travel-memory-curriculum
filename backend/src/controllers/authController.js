@@ -40,7 +40,7 @@ exports.registerUser = async (req, res, next) => {
     //          { _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) }
     //          Otherwise, return 400 with { error: 'Invalid user data' }.
     if (user) {
-      return res.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
+      return res.status(201).json({ _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) });
     }
 
     return res.status(400).json({ error: 'Invalid user data' });
@@ -72,11 +72,11 @@ exports.loginUser = async (req, res, next) => {
     // If user exists AND (await user.matchPassword(password)) is true,
     //          respond with: { _id, username, email, token: generateToken(user._id) }
     if (user && await user.matchPassword(password)) {
-      return res.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
+      return res.status(201).json({ _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) });
     }
 
     // Otherwise, return 401 with { error: 'Invalid email or password' }.
-    return res.status(400).json({ error: 'Invalid email or password' });
+    return res.status(401).json({ error: 'Invalid email or password' });
   }
 
   catch (err) {

@@ -6,7 +6,7 @@ const protect = async (req, res, next) => {
 
   // Check if the Authorization header exists AND starts with 'Bearer':
   //          if (req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
-  if (!req.headers.authorization && !req.headers.authorization.startsWith('Bearer')) {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     // Inside the if block, wrap everything in a try/catch:
     //          a. Extract the token: token = req.headers.authorization.split(' ')[1];
     //          b. Verify it: const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');

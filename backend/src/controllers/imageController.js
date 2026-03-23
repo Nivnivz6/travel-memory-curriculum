@@ -45,7 +45,7 @@ const getImages = async (req, res, next) => {
     //   const images = await Image.find({ userId: req.user._id });
     // Then respond with res.json(images);
     const images = await Image.find({ userId: req.user._id });
-    return res.status(201).json(images);
+    return res.json(images);
   }
 
   catch (err) {
@@ -65,8 +65,8 @@ const getImageById = async (req, res, next) => {
       return res.status(404).json({ error: 'image not found' });
     }
 
-    //. Respond with res.json(image);
-    return res.status(201).json(image);
+    // Respond with res.json(image);
+    return res.json(image);
   }
 
   catch (err) {

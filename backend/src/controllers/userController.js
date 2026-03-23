@@ -44,13 +44,13 @@ const getUserById = async (req, res, next) => {
     // Use `req.params.id` to query: const user = await User.findById(req.params.id);
     const user = await User.findById(req.params.id);
 
-    // TODO: 2. If !user, create an error with message 'User not found' and statusCode 404, throw it.
+    // If !user, create an error with message 'User not found' and statusCode 404, throw it.
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     // Respond with: res.json(user);
-    return res.status(201).json(user);
+    return res.json(user);
   }
 
   catch (err) {
