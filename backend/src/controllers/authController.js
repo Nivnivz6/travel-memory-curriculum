@@ -21,7 +21,7 @@ exports.registerUser = async (req, res, next) => {
     // Validate that all three fields exist. If any are missing, return a 400 status:
     //          return res.status(400).json({ error: 'Please provide all fields' });
     if (!username || !email || !password) {
-      return re.status(400).json({ error: 'Please provide all fields' });
+      return res.status(400).json({ error: 'Please provide all fields' });
     }
 
     // MANUAL DUPLICATE CHECK — Since our schema has no `unique` index, YOU must
@@ -30,7 +30,7 @@ exports.registerUser = async (req, res, next) => {
     //          If userExists, return 400 with { error: 'User already exists' }.
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
     if (userExists) {
-      return re.status(400).json({ error: 'User already exists' });
+      return res.status(400).json({ error: 'User already exists' });
     }
 
     // Create the new user: const user = await User.create({ username, email, password });
@@ -40,7 +40,7 @@ exports.registerUser = async (req, res, next) => {
     //          { _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) }
     //          Otherwise, return 400 with { error: 'Invalid user data' }.
     if (user) {
-      return re.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
+      return res.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
     }
 
     return res.status(400).json({ error: 'Invalid user data' });
@@ -62,7 +62,7 @@ exports.loginUser = async (req, res, next) => {
 
     // Validate both fields exist. Return 400 if missing.
     if (!email || !password) {
-      return re.status(400).json({ error: 'Please provide all fields' });
+      return res.status(400).json({ error: 'Please provide all fields' });
     }
 
     // Find the user by email. Since passwords are hidden by default (select: false),
@@ -72,7 +72,7 @@ exports.loginUser = async (req, res, next) => {
     // If user exists AND (await user.matchPassword(password)) is true,
     //          respond with: { _id, username, email, token: generateToken(user._id) }
     if (user && await user.matchPassword(password)) {
-      return re.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
+      return res.status(201).json({ '_id': user._id, 'username': user.username, 'email': user.email, 'token': generateToken(user._id) });
     }
 
     // Otherwise, return 401 with { error: 'Invalid email or password' }.

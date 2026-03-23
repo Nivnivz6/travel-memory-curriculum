@@ -8,12 +8,12 @@ const uploadImage = async (req, res, next) => {
   try {
     // Check that a file was uploaded: if (!req.file) return error 400.
     if (!req.file) {
-      return re.status(400).json({ error: 'file was not uploaded' });
+      return res.status(400).json({ error: 'file was not uploaded' });
     }
 
     // Check that req.user exists (the Auth middleware sets this).
     if (!req.user) {
-      return re.status(400).json({ error: 'user doesnt exist' });
+      return res.status(400).json({ error: 'user doesnt exist' });
     }
 
     // Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);

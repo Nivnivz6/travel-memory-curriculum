@@ -13,7 +13,7 @@ const createUser = async (req, res, next) => {
     //          message 'Please provide username, email, and password',
     //          set error.statusCode = 400, and throw it.
     if (!username || !email || !password) {
-      return re.status(400).json({ error: 'Please provide username, email, and password' });
+      return res.status(400).json({ error: 'Please provide username, email, and password' });
     }
 
     // MANUAL DUPLICATE CHECK — Query the database:
@@ -22,7 +22,7 @@ const createUser = async (req, res, next) => {
     //          and statusCode 400.
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return re.status(400).json({ error: 'Username or email already exists' });
+      return res.status(400).json({ error: 'Username or email already exists' });
     }
 
     // Create the user: const user = await User.create({ username, email, password });
@@ -46,7 +46,7 @@ const getUserById = async (req, res, next) => {
 
     // TODO: 2. If !user, create an error with message 'User not found' and statusCode 404, throw it.
     if (!user) {
-      return re.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     // Respond with: res.json(user);
