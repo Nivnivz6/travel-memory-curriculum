@@ -5,9 +5,7 @@ const { publishMessage } = require("../services/queueService");
 // @desc    Upload a new image
 // @route   POST /api/images/upload
 const uploadImage = async (req, res, next) => {
-
   try {
-    
     // TODO: 1. Check that a file was uploaded: if (!req.file) return error 400
     if (!req.file) {
       return res.status(400).json({ error: "a file was not uploaded" });
@@ -17,7 +15,11 @@ const uploadImage = async (req, res, next) => {
       return res.status(400).json({ error: "user is not exist" });
     }
     // TODO: 3. Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
-    const s3Result = await uploadFile(req.file);
+    const s3Result = await uploadFile(
+      req.file.buffer,
+      req.file.filename,
+      req.file.mimetype,
+    );
 
     // TODO: 4. Create an Image document in MongoDB. VERY IMPORTANT:
     //          Set the `status` field to 'pending'. This ensures that the image
@@ -26,11 +28,18 @@ const uploadImage = async (req, res, next) => {
     const image = await Image.create({
       userId: req.user._id,
       filename: req.file.originalname,
-      s3Key: s3Result.Key,
-      s3Url: s3Result.Location,
+      s3Key: s3Result.key,
+      s3Url: s3Result.url,
       status: "pending",
     });
- 
+
+    const message = {
+      imageId: image.userId,
+      s3Key: image.s3Key,
+      action: "process-image",
+    };
+
+    await publishMessage(message);
 
     // TODO: 5. Respond with 201 and the saved image document.
 
