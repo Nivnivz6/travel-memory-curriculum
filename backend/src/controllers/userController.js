@@ -5,8 +5,8 @@ const User = require("../models/User");
 const createUser = async (req, res, next) => {
   try {
     // TODO: 1. Extract `username`, `email`, and `password` from `req.body`.
-    const username = req.bosy.username;
-    const email = req.bosy.email;
+    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
     // TODO: 2. Validate all three fields exist. If missing, create an error with
     //          message 'Please provide username, email, and password',
@@ -43,7 +43,7 @@ const getUserById = async (req, res, next) => {
       return res.status(404).json({ error: "User not found" });
     }
     // TODO: 3. Respond with: res.json(user);
-    return res.status(201).json(user);
+    return res.json(user);
 
     return res.status(501).json({ error: "Not implemented" });
   } catch (err) {

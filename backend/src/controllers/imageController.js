@@ -5,7 +5,9 @@ const { publishMessage } = require("../services/queueService");
 // @desc    Upload a new image
 // @route   POST /api/images/upload
 const uploadImage = async (req, res, next) => {
+
   try {
+    
     // TODO: 1. Check that a file was uploaded: if (!req.file) return error 400
     if (!req.file) {
       return res.status(400).json({ error: "a file was not uploaded" });
@@ -16,6 +18,7 @@ const uploadImage = async (req, res, next) => {
     }
     // TODO: 3. Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
     const s3Result = await uploadFile(req.file);
+
     // TODO: 4. Create an Image document in MongoDB. VERY IMPORTANT:
     //          Set the `status` field to 'pending'. This ensures that the image
     //          PERSISTS in the database even before it is processed!
@@ -27,11 +30,12 @@ const uploadImage = async (req, res, next) => {
       s3Url: s3Result.Location,
       status: "pending",
     });
+ 
 
     // TODO: 5. Respond with 201 and the saved image document.
 
     return res.status(201).json(image);
-    return res.status(501).json({ error: "Not implemented" });
+    // return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     next(err);
   }
@@ -46,8 +50,11 @@ const getImages = async (req, res, next) => {
     // You MUST filter by the logged-in user:
     //   const images = await Image.find({ userId: req.user._id });
     const images = await Image.find({ userId: req.user._id });
+    // if(!images){
+    //   return res.status.status(400).json({ error: "no images" });
+    // }
     // Then respond with res.json(images);
-    return res.status(201).json(images);
+    return res.json(images);
     return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     next(err);
@@ -65,7 +72,8 @@ const getImageById = async (req, res, next) => {
       return res.status(404).json({ error: "Image not found" });
     }
     // TODO: 3. Respond with res.json(image);
-    return res.status(201).json(image);
+
+    return res.json(image);
 
     return res.status(501).json({ error: "Not implemented" });
   } catch (err) {

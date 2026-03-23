@@ -19,7 +19,7 @@ const protect = async (req, res, next) => {
       );
       req.user = await User.findById(decoded.id).select("-password");
       next();
-    } catch (err) {
+    } catch {
       return res.status(401).json({ error: "Not authorized, token failed" });
     }
   }
@@ -35,10 +35,9 @@ const protect = async (req, res, next) => {
   // TODO: 4. After the if block, check if token is still undefined:
   //          if (!token) { res.status(401).json({ error: 'Not authorized, no token' }); }
   if (!token) {
-    res.status(401).json({ error: "Not authorized, no token" });
+    return res.status(401).json({ error: "Not authorized, no token" });
   }
   // Placeholder: reject all requests until you implement the above
-  return res.status(401).json({ error: "Not authorized, no token" });
 };
 
 module.exports = { protect };

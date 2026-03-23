@@ -72,7 +72,9 @@ exports.loginUser = async (req, res, next) => {
     //          you MUST use: const user = await User.findOne({ email }).select('+password');
     const user = await User.findOne({ email }).select("+password");
     if (user && (await user.matchPassword(password))) {
-      return { _id, username, email, token: generateToken(user._id) };
+      return res
+        .status(200)
+        .json({ _id: user._id , username: user.username, email: user.email, token: generateToken(user._id) });
     }
     // TODO: 4. If user exists AND (await user.matchPassword(password)) is true,
     //          respond with: { _id, username, email, token: generateToken(user._id) }
