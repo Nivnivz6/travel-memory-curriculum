@@ -67,7 +67,7 @@ exports.loginUser = async (req, res, next) => {
 
     // Find the user by email. Since passwords are hidden by default (select: false),
     //          you MUST use: const user = await User.findOne({ email }).select('+password');
-    const user = await User.findOne({ email }.select('+password'));
+    const user = await User.findOne({ email }).select('+password');
 
     // If user exists AND (await user.matchPassword(password)) is true,
     //          respond with: { _id, username, email, token: generateToken(user._id) }
