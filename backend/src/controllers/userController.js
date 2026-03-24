@@ -4,31 +4,26 @@ const User = require('../models/User');
 // @route   POST /api/users
 const createUser = async (req, res, next) => {
   try {
-    // Extract `username`, `email`, and `password` from `req.body`.
+    // Extract `username`, `email`, and `password` from `req.body`
     const username = req.body.username
     const email = req.body.email
     const password = req.body.password
 
-    // Validate all three fields exist. If missing, create an error with
-    //          message 'Please provide username, email, and password',
-    //          set error.statusCode = 400, and throw it.
+    // Validate all three fields exist
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Please provide username, email, and password' });
     }
 
-    // MANUAL DUPLICATE CHECK — Query the database:
-    //          const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    //          If existingUser, throw an error with message 'Username or email already exists'
-    //          and statusCode 400.
+    // MANUAL DUPLICATE CHECK — Query the database
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ error: 'Username or email already exists' });
     }
 
-    // Create the user: const user = await User.create({ username, email, password });
+    // Create the user
     const user = await User.create({ username, email, password });
 
-    // Respond with: res.status(201).json(user);
+    // Respond
     return res.status(201).json(user);
   }
 
@@ -41,15 +36,15 @@ const createUser = async (req, res, next) => {
 // @route   GET /api/users/:id
 const getUserById = async (req, res, next) => {
   try {
-    // Use `req.params.id` to query: const user = await User.findById(req.params.id);
+    // Use `req.params.id` to query
     const user = await User.findById(req.params.id);
 
-    // If !user, create an error with message 'User not found' and statusCode 404, throw it.
+    // If !user, create an error with message 'User not found' and statusCode 404, throw it
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Respond with: res.json(user);
+    // Respond
     return res.json(user);
   }
 

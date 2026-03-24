@@ -10,7 +10,7 @@ const cache = require('../middleware/cache');
 const { protect } = require('../middleware/auth');
 
 router.post('/upload', protect, upload.single('image'), uploadImage);
-router.get('/', protect, cache('images'), getImages);
+router.get('/', protect, getImages);
 router.get('/:id', protect, getImageById);
 
 module.exports = router;

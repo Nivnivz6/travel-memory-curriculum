@@ -13,32 +13,27 @@ const generateToken = (id) => {
 // @access  Public
 exports.registerUser = async (req, res, next) => {
   try {
-    // Extract `username`, `email`, and `password` from `req.body`.
+    // Extract `username`, `email`, and `password` from `req.body`
     const username = req.body.username
     const email = req.body.email
     const password = req.body.password
 
-    // Validate that all three fields exist. If any are missing, return a 400 status:
-    //          return res.status(400).json({ error: 'Please provide all fields' });
+    // Validate that all three fields exist. If any are missing, return a 400 status
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Please provide all fields' });
     }
 
     // MANUAL DUPLICATE CHECK — Since our schema has no `unique` index, YOU must
-    //          query the database manually before creating the user:
-    //          const userExists = await User.findOne({ $or: [{ email }, { username }] });
-    //          If userExists, return 400 with { error: 'User already exists' }.
+    //          query the database manually before creating the user
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
     if (userExists) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Create the new user: const user = await User.create({ username, email, password });
+    // Create the new user
     const user = await User.create({ username, email, password });
 
-    // If user was created, respond with 201 and a JSON object containing:
-    //          { _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) }
-    //          Otherwise, return 400 with { error: 'Invalid user data' }.
+    // If user was created, respond with 201 and a JSON object containing
     if (user) {
       return res.status(201).json({ _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) });
     }
@@ -56,11 +51,11 @@ exports.registerUser = async (req, res, next) => {
 // @access  Public
 exports.loginUser = async (req, res, next) => {
   try {
-    // Extract `email` and `password` from `req.body`.
+    // Extract `email` and `password` from `req.body`
     const email = req.body.email
     const password = req.body.password
 
-    // Validate both fields exist. Return 400 if missing.
+    // Validate both fields exist. Return 400 if missing
     if (!email || !password) {
       return res.status(400).json({ error: 'Please provide all fields' });
     }

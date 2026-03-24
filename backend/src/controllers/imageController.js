@@ -6,17 +6,17 @@ const { publishMessage } = require('../services/queueService');
 // @route   POST /api/images/upload
 const uploadImage = async (req, res, next) => {
   try {
-    // Check that a file was uploaded: if (!req.file) return error 400.
+    // Check that a file was uploaded
     if (!req.file) {
       return res.status(400).json({ error: 'file was not uploaded' });
     }
 
-    // Check that req.user exists (the Auth middleware sets this).
+    // Check that req.user exists (the Auth middleware sets this)
     if (!req.user) {
       return res.status(400).json({ error: 'user doesnt exist' });
     }
 
-    // Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
+    // Upload the file buffer to S3/MinIO
     const s3Result = await uploadFile(req.file.buffer, req.file.filename, req.file.mimetype);
 
     // Create an Image document in MongoDB. VERY IMPORTANT:
@@ -33,7 +33,7 @@ const uploadImage = async (req, res, next) => {
 
     publishMessage(message)
 
-    // Respond with 201 and the saved image document.
+    // Respond with 201 and the saved image document
     return res.status(201).json(image);
   }
 
@@ -64,7 +64,7 @@ const getImages = async (req, res, next) => {
 // @route   GET /api/images/:id
 const getImageById = async (req, res, next) => {
   try {
-    // Query: const image = await Image.findById(req.params.id);
+    // Query
     const image = await Image.findById(req.params.id);
 
     // If !image, throw a 404 error with message 'Image not found'.
@@ -72,7 +72,7 @@ const getImageById = async (req, res, next) => {
       return res.status(404).json({ error: 'image not found' });
     }
 
-    // Respond with res.json(image);
+    // Respond
     return res.json(image);
   }
 
