@@ -33,7 +33,6 @@ const uploadImage = async (req, res, next) => {
       status: "pending",
     });
 
-
     const message = {
       imageId: image._id,
       s3Key: image.s3Key,
@@ -60,12 +59,7 @@ const getImages = async (req, res, next) => {
     // You MUST filter by the logged-in user:
     //   const images = await Image.find({ userId: req.user._id });
     const images = await Image.find({ userId: req.user._id });
-    
-
-    // if(!images){
-    //   return res.status.status(400).json({ error: "no images" });
-    // }
-    // Then respond with res.json(images);
+ 
     return res.json(images);
   } catch (err) {
     next(err);
@@ -86,7 +80,6 @@ const getImageById = async (req, res, next) => {
 
     return res.json(image);
 
-    return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     if (err.kind === "ObjectId") {
       err.statusCode = 404;

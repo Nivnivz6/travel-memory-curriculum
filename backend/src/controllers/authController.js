@@ -49,7 +49,6 @@ exports.registerUser = async (req, res, next) => {
     else {
       return res.status(400).json({ error: "Invalid user data" });
     }
-    return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     next(err);
   }
@@ -82,7 +81,6 @@ exports.loginUser = async (req, res, next) => {
     else {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-    return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     next(err);
   }
