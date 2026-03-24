@@ -6,7 +6,6 @@ const protect = async (req, res, next) => {
 
   // TODO: 1. Check if the Authorization header exists AND starts with 'Bearer':
   //          if (req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
-  //
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -37,7 +36,6 @@ const protect = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ error: "Not authorized, no token" });
   }
-  // Placeholder: reject all requests until you implement the above
 };
 
 module.exports = { protect };

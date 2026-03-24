@@ -36,6 +36,8 @@ exports.registerUser = async (req, res, next) => {
     // TODO: 4. Create the new user: const user = await User.create({ username, email, password });
     const user = await User.create({ username, email, password });
     // TODO: 5. If user was created, respond with 201 and a JSON object containing:
+    //          { _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) }
+    //          Otherwise, return 400 with { error: 'Invalid user data' }.
     if (user) {
       return res.status(201).json({
         _id: user._id,
@@ -43,10 +45,7 @@ exports.registerUser = async (req, res, next) => {
         email: user.email,
         token: generateToken(user._id),
       });
-    }
-    //          { _id: user._id, username: user.username, email: user.email, token: generateToken(user._id) }
-    //          Otherwise, return 400 with { error: 'Invalid user data' }.
-    else {
+    } else {
       return res.status(400).json({ error: "Invalid user data" });
     }
   } catch (err) {
@@ -73,7 +72,12 @@ exports.loginUser = async (req, res, next) => {
     if (user && (await user.matchPassword(password))) {
       return res
         .status(200)
-        .json({ _id: user._id , username: user.username, email: user.email, token: generateToken(user._id) });
+        .json({
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          token: generateToken(user._id),
+        });
     }
     // TODO: 4. If user exists AND (await user.matchPassword(password)) is true,
     //          respond with: { _id, username, email, token: generateToken(user._id) }

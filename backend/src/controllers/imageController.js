@@ -20,7 +20,6 @@ const uploadImage = async (req, res, next) => {
       req.file.filename,
       req.file.mimetype,
     );
-
     // TODO: 4. Create an Image document in MongoDB. VERY IMPORTANT:
     //          Set the `status` field to 'pending'. This ensures that the image
     //          PERSISTS in the database even before it is processed!
@@ -32,17 +31,13 @@ const uploadImage = async (req, res, next) => {
       s3Url: s3Result.url,
       status: "pending",
     });
-
     const message = {
       imageId: image._id,
       s3Key: image.s3Key,
       action: "process-image",
     };
-
     await publishMessage(message);
-
     // TODO: 5. Respond with 201 and the saved image document.
-
     return res.status(201).json(image);
     // return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
@@ -59,7 +54,7 @@ const getImages = async (req, res, next) => {
     // You MUST filter by the logged-in user:
     //   const images = await Image.find({ userId: req.user._id });
     const images = await Image.find({ userId: req.user._id });
- 
+
     return res.json(images);
   } catch (err) {
     next(err);
@@ -77,9 +72,7 @@ const getImageById = async (req, res, next) => {
       return res.status(404).json({ error: "Image not found" });
     }
     // TODO: 3. Respond with res.json(image);
-
     return res.json(image);
-
   } catch (err) {
     if (err.kind === "ObjectId") {
       err.statusCode = 404;

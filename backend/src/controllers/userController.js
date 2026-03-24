@@ -26,7 +26,6 @@ const createUser = async (req, res, next) => {
     const user = await User.create({ username, email, password });
     // TODO: 5. Respond with:
     return res.status(201).json(user);
-    return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     next(err);
   }
@@ -44,8 +43,6 @@ const getUserById = async (req, res, next) => {
     }
     // TODO: 3. Respond with: res.json(user);
     return res.json(user);
-
-    return res.status(501).json({ error: "Not implemented" });
   } catch (err) {
     // Handle invalid ObjectId format
     if (err.kind === "ObjectId") {

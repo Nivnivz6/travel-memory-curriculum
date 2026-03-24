@@ -4,29 +4,7 @@ const bcrypt = require("bcryptjs");
 // =============================================================
 // TODO: Define the User Schema
 // =============================================================
-// Create a new mongoose.Schema with the following fields:
-//
-// 1. username:
-//    - type: String
-//    - required: [true, 'Username is required']
-//    - trim: true
-//    NOTE: Do NOT add `unique: true`. We handle duplicates manually in the controller.
-//
-// 2. email:
-//    - type: String
-//    - required: [true, 'Email is required']
-//    - trim: true
-//    - lowercase: true
-//    NOTE: Do NOT add `unique: true`. We handle duplicates manually in the controller.
-//
-// 3. password:
-//    - type: String
-//    - required: [true, 'Password is required']
-//    - minlength: 6
-//    - select: false   (This hides the password from queries by default for security!)
-//
-// Add { timestamps: true } as the second argument to automatically track createdAt/updatedAt.
-// =============================================================
+
 const userSchema = new mongoose.Schema(
   {
     // TODO: Define username field here
