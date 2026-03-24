@@ -19,23 +19,22 @@ const uploadImage = async (req, res, next) => {
     // Upload the file buffer to S3/MinIO: const s3Result = await uploadFile(req.file);
     const s3Result = await uploadFile(req.file.buffer, req.file.filename, req.file.mimetype);
 
-    const message = {
-      imageId: req.user._id,
-      s3Key: s3Result.key,
-      action: 'process-image'
-    }
-
-    await publishMessage(message)
-
     // Create an Image document in MongoDB. VERY IMPORTANT:
     //          Set the `status` field to 'pending'. This ensures that the image
     //          PERSISTS in the database even before it is processed!
     //          { userId: req.user._id, filename: req.file.originalname, s3Key: s3Result.key, s3Url: s3Result.url, status: 'pending' }
     const image = await Image.create({ userId: req.user._id, filename: req.file.originalname, s3Key: s3Result.key, s3Url: s3Result.url, status: 'pending' })
 
+    const message = {
+      imageId: image._id,
+      s3Key: s3Result.key,
+      action: 'process-image'
+    }
+
+    publishMessage(message)
+
     // Respond with 201 and the saved image document.
     return res.status(201).json(image);
-
   }
 
   catch (err) {
