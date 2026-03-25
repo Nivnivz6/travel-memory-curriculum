@@ -484,4 +484,87 @@ Your implementation is complete when:
 
 ---
 
+## 🔗 Resources & References
+
+### ⚛️ React Core
+
+| Topic                         | Link                                                                         |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| All Built-in React Hooks      | [react.dev/reference/react/hooks](https://react.dev/reference/react/hooks)   |
+| `useState`                    | [react.dev – useState](https://react.dev/reference/react/useState)           |
+| `useEffect`                   | [react.dev – useEffect](https://react.dev/reference/react/useEffect)         |
+| `useContext`                  | [react.dev – useContext](https://react.dev/reference/react/useContext)       |
+| `useCallback`                 | [react.dev – useCallback](https://react.dev/reference/react/useCallback)     |
+| `useMemo`                     | [react.dev – useMemo](https://react.dev/reference/react/useMemo)             |
+| `useRef`                      | [react.dev – useRef](https://react.dev/reference/react/useRef)               |
+| Context API (`createContext`) | [react.dev – createContext](https://react.dev/reference/react/createContext) |
+
+### 🪝 Custom Hooks
+
+| Topic                                      | Link                                                                                                                                |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Reusing Logic with Custom Hooks (Official) | [react.dev – Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)                                                 |
+| Custom Hook Patterns & Best Practices      | [patterns.dev – Hooks Pattern](https://www.patterns.dev/react/hooks-pattern/)                                                       |
+| Mastering Custom Hooks (Deep Dive)         | [dev.to – Austin W Digital](https://dev.to/austinwdigital/mastering-custom-react-hooks-best-practices-for-clean-scalable-code-40b1) |
+| Community Hook Library (usehooks.com)      | [usehooks.com](https://usehooks.com/)                                                                                               |
+
+### 🔄 TanStack Query (React Query v5)
+
+| Topic                             | Link                                                                                                              |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Official Docs – Overview          | [tanstack.com/query/v5](https://tanstack.com/query/v5/docs/framework/react/overview)                              |
+| Installation & Quick Start        | [tanstack.com – Quick Start](https://tanstack.com/query/v5/docs/framework/react/quick-start)                      |
+| `useQuery` Reference              | [tanstack.com – useQuery](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery)                  |
+| `useMutation` Reference           | [tanstack.com – useMutation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation)            |
+| Query Keys Guide                  | [tanstack.com – Query Keys](https://tanstack.com/query/v5/docs/framework/react/guides/query-keys)                 |
+| Optimistic Updates                | [tanstack.com – Optimistic Updates](https://tanstack.com/query/v5/docs/framework/react/guides/optimistic-updates) |
+| QueryClient (`invalidateQueries`) | [tanstack.com – QueryClient](https://tanstack.com/query/v5/docs/reference/QueryClient)                            |
+| `staleTime` / `gcTime` Explained  | [tanstack.com – Caching](https://tanstack.com/query/v5/docs/framework/react/guides/caching)                       |
+| TanStack Query Devtools           | [tanstack.com – Devtools](https://tanstack.com/query/v5/docs/framework/react/devtools)                            |
+
+### 🌐 Axios & HTTP
+
+| Topic                               | Link                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------- |
+| Axios Official Docs                 | [axios-http.com/docs/intro](https://axios-http.com/docs/intro)                  |
+| Axios Instance & Config             | [axios-http.com – Config Defaults](https://axios-http.com/docs/config_defaults) |
+| Axios Request Config                | [axios-http.com – Request Config](https://axios-http.com/docs/req_config)       |
+| File Upload with `onUploadProgress` | [axios-http.com – Multipart Bodies](https://axios-http.com/docs/multipart)      |
+
+### 🔐 JWT Authentication
+
+| Topic                                         | Link                                                                                                         |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| JWT Introduction (jwt.io)                     | [jwt.io/introduction](https://jwt.io/introduction/)                                                          |
+| JWT Auth in React + React Router (full guide) | [dev.to – Sanjay TTG](https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03)           |
+| Adding JWT Auth to React (Clerk Blog)         | [clerk.com – JWT Auth](https://clerk.com/blog/adding-jwt-authentication-to-react)                            |
+| localStorage vs Cookie token storage          | [developer.mozilla.org – localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) |
+
+### 🛡️ Error Boundaries
+
+| Topic                                  | Link                                                                                                                         |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Error Boundaries (Official React Docs) | [react.dev – Error Boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary) |
+| `react-error-boundary` Package (npm)   | [npmjs.com – react-error-boundary](https://www.npmjs.com/package/react-error-boundary)                                       |
+| Error Boundaries with React Router     | [reactrouter.com – Error Boundaries](https://reactrouter.com/how-to/error-boundary)                                          |
+
+### ⏱️ Debouncing & Performance
+
+| Topic                                 | Link                                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `useDebounce` Hook (usehooks.com)     | [usehooks.com – useDebounce](https://usehooks.com/usedebounce)                                    |
+| Debouncing Explained (MDN setTimeout) | [developer.mozilla.org – setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout) |
+| React Performance Optimization        | [react.dev – Render & Commit](https://react.dev/learn/render-and-commit)                          |
+
+### 📦 Package Registries & Tooling
+
+| Tool                           | Link                                                                                     |
+| ------------------------------ | ---------------------------------------------------------------------------------------- |
+| `@tanstack/react-query` on npm | [npmjs.com – @tanstack/react-query](https://www.npmjs.com/package/@tanstack/react-query) |
+| `axios` on npm                 | [npmjs.com – axios](https://www.npmjs.com/package/axios)                                 |
+| `react-error-boundary` on npm  | [npmjs.com – react-error-boundary](https://www.npmjs.com/package/react-error-boundary)   |
+| Vite (frontend build tool)     | [vitejs.dev](https://vitejs.dev/)                                                        |
+
+---
+
 Good luck! Remember to commit your work frequently and ask questions when stuck.
