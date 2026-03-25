@@ -124,6 +124,7 @@ backend/
 ├── middleware/
 │ └── auth.js # JWT verification middleware
 ├── models/
+│ └── User.js # Mongoose schema for users
 │ └── Image.js # Mongoose schema for images
 ├── routes/
 │ ├── auth.js
