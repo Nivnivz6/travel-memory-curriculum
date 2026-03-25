@@ -1,13 +1,15 @@
 # 🚀 Welcome to the Full-Stack Engineering Curriculum
 
-Congratulations on starting your journey into professional software engineering! Over the next few weeks, you will build a production-grade, distributed **Travel Memory App** from scratch. 
+Congratulations on starting your journey into professional software engineering! Over the next few weeks, you will build a production-grade, distributed **Travel Memory App** from scratch.
 
 This isn't just a "tutorial." You are going to build a system that handles security, complex data, massive file storage, in-memory performance, and background processing. By the end, you will have a deep understanding of the architecture used by the world's most successful tech companies.
 
 ---
 
 ## 🛠️ The Tech Stack
+
 You will master a modern, industry-standard stack:
+
 - **Frontend**: React (SPAs) built with Vite
 - **Backend**: Node.js & Express.js
 - **Database**: MongoDB (NoSQL) with Mongoose
@@ -15,15 +17,6 @@ You will master a modern, industry-standard stack:
 - **Object Storage**: MinIO (S3-compatible local storage)
 - **Message Broker**: RabbitMQ (Microservices logic)
 - **Infrastructure**: Docker & Docker Compose
-
----
-
-## 🏗️ How This Course Works
-This project uses a **Branch-Based Learning System**. 
-
-- **The Golden Key**: The `main` branch (where you are now) contains the fully solved, production-ready application. Use it as a reference if you get stuck!
-- **The Worksheet Branches**: You will progress through the course by checking out specific "Phase" branches (e.g., `git checkout phase-1`).
-- **The Challenges**: Each branch has most of its core logic stripped and replaced with `// TODO:` comments. Your job is to fill in the blanks using the comprehensive **README.md** found inside that specific branch as your guide.
 
 ---
 
@@ -42,16 +35,25 @@ This project uses a **Branch-Based Learning System**.
 Are you ready for Day 1? Run these commands in your terminal to begin:
 
 1. **Clone the repository** (if you haven't already):
+
    ```bash
    git clone <repository-url>
    cd travel-memory-curriculum
    ```
 
-2. **Move to your first lesson**:
+2. **Move to your dev branch**:
+
    ```bash
-   git checkout phase-1
+   git checkout <your name>-dev
    ```
 
-3. **Begin**: Open the `README.md` file in the root directory while on the `phase-1` branch to read your first assignment!
+   This is your personal development branch. From here, you'll check out into lesson branches, complete the work, and open a PR when done. Once merged, carry your progress forward to the next phase. By the end, you'll have a fully working app.
+   3. **Move to your first lesson branch**:
+
+   ```bash
+   git checkout <your name>/phase-1
+   ```
+
+   3. **Begin**: Open `lessons/phase-1.md` file in the root directory to read your first assignment!
 
 Good luck, Engineer. Let's start building! 🚀

@@ -1,94 +1,48 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Login from './components/Login';
-import Register from './components/Register';
-import Upload from './components/Upload';
-import Gallery from './components/Gallery';
-import './index.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { TopNavBar } from "./components/TopNavBar";
+import { Gallery } from "./components/Gallery";
+import { Analytics } from "./components/Analytics";
+import { Login, SignUp } from "./components/Auth";
+import { AnimatePresence, motion } from "motion/react";
 
-const API_URL = 'http://localhost:3000/api';
+function AppContent() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
-function App() {
-  const [images, setImages] = useState([]);
-  
-  // Auth State
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-  const [isLoginMode, setIsLoginMode] = useState(true);
-
-  // Fetch images when token changes
-  useEffect(() => {
-    if (token) {
-      fetchImages();
-    }
-  }, [token]);
-
-  const fetchImages = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/images`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setImages(res.data);
-    } catch (err) {
-      console.error('Failed to fetch images:', err);
-      if (err.response?.status === 401) {
-        logout();
-      }
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    setImages([]);
-  };
-
-  const toggleMode = () => setIsLoginMode(!isLoginMode);
-
-  // ------------------------------------------------------------------------
-  // Render Auth View if not logged in
-  // ------------------------------------------------------------------------
-  if (!token) {
-    return (
-      <div className="container">
-        <header className="header">
-          <h1>Travel Memory App</h1>
-          <p>Login to upload and share your favorite travel moments</p>
-        </header>
-
-        {isLoginMode ? (
-          <Login setToken={setToken} setUser={setUser} toggleMode={toggleMode} />
-        ) : (
-          <Register setToken={setToken} setUser={setUser} toggleMode={toggleMode} />
-        )}
-      </div>
-    );
-  }
-
-  // ------------------------------------------------------------------------
-  // Render Main App View if logged in
-  // ------------------------------------------------------------------------
   return (
-    <div className="container">
-      <header className="header" style={{ position: 'relative' }}>
-        <h1>Travel Memory App</h1>
-        <p>Upload and share your favorite travel moments</p>
-        <button 
-          onClick={logout} 
-          style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: '1px solid #ccc', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Logout ({user?.username})
-        </button>
-      </header>
+    <div className="min-h-screen bg-surface">
+      {!isAuthPage && <TopNavBar />}
 
-      <main>
-        <Upload images={images} setImages={setImages} logout={logout} token={token} />
-        <Gallery images={images} />
-      </main>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <Gallery />
+              </motion.div>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/analytics"
+            element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <Analytics />
+              </motion.div>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
