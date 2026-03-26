@@ -1,7 +1,7 @@
-const express = require("express");
-const { connectDB } = require("./config/db");
-const cors = require("cors");
-const authRouter = require('./routes/auth')
+import express from "express";
+import { connectDB } from "./config/db.js";
+import cors from "cors";
+import authRouter from "./routes/auth.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +15,11 @@ app.use(
     origin: "http://localhost:5173",
   }),
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+connectDB(); 
 app.use("/api/auth", authRouter)
 
 app.listen(PORT, () => {

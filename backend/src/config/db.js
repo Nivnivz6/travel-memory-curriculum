@@ -1,51 +1,44 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose";
+import "dotenv/config";
 
-const dotenv = require("dotenv");
-dotenv.config()
+mongoose.Promise = global.Promise;
+mongoose.set("strictQuery", true);
 
+const connectDB = async () => {
+  const url = process.env.MONGO_URI;
 
-mongoose.Promise= global.Promise;
-const connect = mongoose.connection;
-mongoose.set('strictQuery', true)
+  const connect = mongoose.connection;
 
+  connect.on("connected", () => {
+    console.log("MongoDB Connection Established");
+  });
 
-const connectDB = async()=>{
-    const url = process.env.MONGO_URI
-   
-    connect.on('connected', async()=>{
-        console.log('MongoDb Connection Established')
-    })
-    connect.on('reconnected', async()=>{
-        console.log('MongoDB Connection Reestablished')
-    })
-    connect.on('disconnected',()=>{
-        console.log('MongoDB Connection Disconnected')
-        console.log('Trying to reconnect to Mongo...')
+  connect.on("reconnected", () => {
+    console.log("MongoDB Connection Reestablished");
+  });
 
+  connect.on("disconnected", () => {
+    console.log("MongoDB Connection Disconnected");
+    console.log("Trying to reconnect to Mongo...");
 
-        setTimeout(()=>{
-            mongoose.connect(url,{
-                useNewurlParser: true,
-                useUnifiedTopology: true,
-                keepAlive: true,
-                socketTimeourMS: 3000,
-                connectTimeoutMS: 3000
-            })
-        }, 3000)
-    })
-    connect.on('close',() =>{
-        console.log('Mongo Connection Closed')
-    });
-    connect.on('error', (error) => {
-        console.log('Mongo Connection Error: '+ error)
-    })
-    await mongoose
-    .connect(url,{
-        useNewurlParser: true,
-        useUnifiedTopology: true
-    })
-    .catch((error) => console.log(error))
-}
+    setTimeout(() => {
+      mongoose.connect(url).catch(err => console.log("Reconnect failed:", err));
+    }, 3000);
+  });
 
+  connect.on("close", () => {
+    console.log("Mongo Connection Closed");
+  });
 
-module.exports = {connectDB}
+  connect.on("error", (error) => {
+    console.log("Mongo Connection Error:", error);
+  });
+
+  try {
+    await mongoose.connect(url);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { connectDB };

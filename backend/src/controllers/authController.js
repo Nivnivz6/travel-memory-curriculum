@@ -1,27 +1,37 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const User = require("../models/user");
-import { signToken } from "../utils/jwt";
-
+import express from "express";
+import bcrypt from "bcryptjs";
+import User from "../models/user.js";
+import { signToken } from "../utils/jwt.js";
 
 const register = async (req, res) => {
+
   console.log("im here")
-  const name = req.body.username;
+
+  // const name = req.body.name;
+  console.log(req.body)
+  
   const email = req.body.email;
+    const name = req.body.username;
+
   const password = req.body.password;
 
   try {
     let user = await User.findOne({ email });
+        console.log("hi")
+
     if (user) return res.status(400).json({ msg: "User already exists" });
+    console.log("hi")
 
     const salt = await bcrypt.genSalt(10);
     let hashPassword = await bcrypt.hash(password, salt);
-
+console.log("create user")
     user = new User({ name, email, password: hashPassword });
     await user.save();
     const token = signToken({ userId: user._id });
-    res.status(201).json({ msg: "Registered successfully", token });
+    console.log(token)
+    return res.status(201).json({ msg: "Registered successfully", token });
   } catch (err) {
+    console.log(err)
     return res.status(400).json({ msg: err });
   }
 };

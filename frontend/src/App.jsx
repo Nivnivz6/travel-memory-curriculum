@@ -118,7 +118,7 @@ function App() {
           style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: '1px solid #ccc', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
         >
           {/* Render the user's username next to Logout */}
-          Logout {user.username}
+          Logout ({user.username})
         </button>
       </header>
 
