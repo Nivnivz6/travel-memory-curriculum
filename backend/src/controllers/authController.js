@@ -3,10 +3,10 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 import { signToken } from "../utils/jwt";
 
-const router = express.Router();
 
 const register = async (req, res) => {
-  const name = req.body.name;
+  console.log("im here")
+  const name = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
 

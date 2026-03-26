@@ -1,4 +1,4 @@
-
+const Minio = require('minio')
 import dotenv from 'dotenv'; 
 
 dotenv.config();
