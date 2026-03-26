@@ -28,4 +28,47 @@ const uploadImage = async (req, res, next) => {
     }
 }
 
-module.exports = { uploadImage };
+const getImages = async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const status = req.query.status;
+        const minSize = req.query.minSize;
+        const maxSize = req.query.maxSize;
+        const fromDate = req.query.fromDate;
+        const toDate = req.query.fromDate;
+
+        const filter = {}
+
+        if (name) {
+            filter['name'] = name;
+        }
+
+        if (status) {
+            filter['status'] = status;
+        }
+
+        if (minSize) {
+            filter['size'] = { $bt: minSize };
+        }
+
+        if (maxSize) {
+            filter['size'] = { $lt: maxSize };
+        }
+
+        if (fromDate) {
+            filter['updatedAt'] = { $bt: fromDate };
+        }
+
+        if (toDate) {
+            filter['updatedAt'] = { $lt: toDate };
+        }
+
+        return res.status(200).json(Image.find());
+    }
+
+    catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { uploadImage, getImages };
