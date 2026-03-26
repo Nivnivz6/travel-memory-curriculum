@@ -1,14 +1,8 @@
-const { registerUser } = require('../controllers/authController');
-const authMiddleware = require('./authMiddleware');
+const registerUser = require('../controllers/authController');
+const authMiddleware = require('../middleware/auth');
 const express = require('express');
-const app = express();
+const router = express.Router();
 
-app.use(express.json());
+router.post('/auth/register', registerUser);
 
-app.post('/api/auth/login', authMiddleware, (req, res, err, next) => {
-    registerUser(req, res, err, next)
-});
-
-app.post('api/auth/register', authMiddleware, (req, res, err, next) => {
-
-});
+module.exports = router;

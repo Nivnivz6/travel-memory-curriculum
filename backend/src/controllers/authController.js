@@ -1,15 +1,11 @@
 const jwt = require('jsonwebtoken');
-const Math = require('Math');
+const User = require('../models/User')
 
-const rand = () => {
-    return Math.random().toString(36).substring(2); // remove `0.`
+const generateToken = (user) => {
+    return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
-const generateToken = () => {
-    return rand() + rand(); // to make it longer
-};
-
-export const registerUser = (req, res, err, next) => {
+const registerUser = async (req, res, next) => {
     try {
         const username = req.body.username;
         const email = req.body.email;
@@ -19,11 +15,19 @@ export const registerUser = (req, res, err, next) => {
             return res.status(401).json({ error: 'One of the fields is missing' })
         }
 
-        const token = generateToken();
-        res.status(201).json({  })
+        const user = await User.create({ username, email, password });
+        
+        if (!user) {
+            return res.status(401).json({ error: 'User already exists' });
+        }
+
+        const token = generateToken(user);
+        return res.status(201).json({ _id: user._id, username: username, email: email, token: token })
     }
 
     catch (err) {
         next(err)
     }
 }
+
+module.exports = registerUser;
