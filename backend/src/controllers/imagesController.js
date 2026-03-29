@@ -14,7 +14,7 @@ const uploadImage = async (req, res, next) => {
             userId: req.user.id,
             name: name,
             status: 'pending',
-            s3Key: `${bucket}/${name}`, 
+            s3Key: `${bucket}/${name}`,
             size: size
         });
 
@@ -35,9 +35,9 @@ const getImages = async (req, res, next) => {
         const minSize = req.query.minSize;
         const maxSize = req.query.maxSize;
         const fromDate = req.query.fromDate;
-        const toDate = req.query.fromDate;
+        const toDate = req.query.toDate;
 
-        const filter = {}
+        let filter = {}
 
         if (name) {
             filter['name'] = name;
@@ -47,23 +47,32 @@ const getImages = async (req, res, next) => {
             filter['status'] = status;
         }
 
-        if (minSize) {
-            filter['size'] = { $bt: minSize };
+        if (minSize || maxSize) {
+            if (!maxSize) {
+                filter['size'] = { $gte: Number(minSize) };
+            }
+            else if (!minSize) {
+                filter['size'] = { $lte: Number(maxSize) };
+            }
+            else {
+                filter['size'] = { $gte: Number(minSize), $lte: Number(maxSize) };
+            }
         }
 
-        if (maxSize) {
-            filter['size'] = { $lt: maxSize };
+        if (fromDate || toDate) {
+            if (!toDate) {
+                filter['updatedAt'] = { $gt: fromDate };
+            }
+            else if (!fromDate) {
+                filter['updatedAt'] = { $lt: toDate };
+            }
+            else {
+                filter['updatedAt'] = { $gt: fromDate, $lt: toDate };
+            }
         }
 
-        if (fromDate) {
-            filter['updatedAt'] = { $bt: fromDate };
-        }
-
-        if (toDate) {
-            filter['updatedAt'] = { $lt: toDate };
-        }
-
-        return res.status(200).json(Image.find());
+        const images = await Image.find(filter);
+        return res.status(200).json(images);
     }
 
     catch (err) {
@@ -71,4 +80,43 @@ const getImages = async (req, res, next) => {
     }
 }
 
-module.exports = { uploadImage, getImages };
+const deleteImages = async (req, res, next) => {
+    try {
+        const ids = req.body.ids;
+        let objectsNamesToDelete = [];
+        let filter = {};
+
+        if (ids.length === 0) {
+            const stream = minioClient.listObjects(bucketName, '', true);
+            stream.on('data', obj => {
+                if (obj.name) {
+                    objectsNamesToDelete.push(obj.name);
+                }
+            });
+            stream.on('end', () => {minioClient.removeObjects(bucketName, objectNamesToDelete)});
+            stream.on('error', (err) => {console.log(err)});
+        }
+
+        else {
+            const objectsIdsToDelete = ids.map(id => new ObjectId(id));
+            const images = await Image.find({ _id: { $in: objectsIdsToDelete } });
+            objectsNamesToDelete = images.map(img => img.name);
+
+            filter = {
+                _id: { $in: objectsIdsToDelete }
+            }
+        }
+
+        await Image.deleteMany(filter);
+        await minioClient.removeObjects(process.env.MINIO_BUCKET, objectsNamesToDelete);
+
+        return res.status(200).json({ message: "Images deleted successfully" });
+    }
+
+    catch (err) {
+        next(err);
+    }
+}
+
+
+module.exports = { uploadImage, getImages, deleteImages };
