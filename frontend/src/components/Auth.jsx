@@ -1,11 +1,37 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { LayoutGrid, User, Lock, Eye, EyeOff, ArrowRight, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
+import { useMutation } from "@tanstack/react-query";
+import { loginApi, registerApi } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
+  const { login: authLogin, setIsLoading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const {
+    mutate: login,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async () => {
+      setIsLoading(true);
+      if (!email || !password) throw new Error("Please fill in all fields.");
+      return loginApi({ email, password });
+    },
+    onSuccess: (response) => {
+      authLogin(response.data);
+      navigate(`/`);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-surface relative overflow-hidden">
@@ -35,12 +61,23 @@ export const Login = () => {
               className="space-y-6"
               onSubmit={(e) => {
                 e.preventDefault();
-                navigate("/");
+                login();
               }}
             >
+              {/* --- ERROR MESSAGE BLOCK --- */}
+              {isError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 rounded-lg bg-error-container/20 border border-error/20 text-error text-sm font-medium"
+                >
+                  {error instanceof Error ? error.message : "An unexpected error occurred"}
+                </motion.div>
+              )}
+
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider" htmlFor="username">
-                  Username
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider" htmlFor="email">
+                  Email
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
@@ -48,9 +85,11 @@ export const Login = () => {
                   </div>
                   <input
                     className="w-full pl-10 pr-4 py-3 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-lg text-on-surface placeholder:text-outline transition-all duration-200 outline-none"
-                    id="username"
+                    id="email"
                     placeholder="e.g. creative_pixel"
-                    type="text"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -69,6 +108,8 @@ export const Login = () => {
                     id="password"
                     placeholder="••••••••"
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface-variant transition-colors"
@@ -79,21 +120,12 @@ export const Login = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-center">
-                <input
-                  className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20 bg-surface-container-low"
-                  id="remember"
-                  type="checkbox"
-                />
-                <label className="ml-2 text-sm text-on-surface-variant font-medium" htmlFor="remember">
-                  Keep me logged in
-                </label>
-              </div>
               <button
                 className="w-full primary-gradient text-on-primary font-headline font-bold py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all duration-200"
                 type="submit"
+                disabled={isPending}
               >
-                Login
+                {isPending ? "Logging in..." : "Login"}
               </button>
             </form>
           </div>
@@ -112,8 +144,32 @@ export const Login = () => {
 };
 
 export const SignUp = () => {
+  const { register: registerUser, setIsLoading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const {
+    mutate: register,
+    error,
+    isError,
+    isPending,
+  } = useMutation({
+    mutationFn: async () => {
+      setIsLoading(true);
+      if (!email || !username || !password) throw new Error("Please fill in all fields.");
+      return registerApi({ email, username, password });
+    },
+    onSuccess: (response) => {
+      registerUser(response.data);
+      navigate("/");
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-surface relative overflow-hidden">
@@ -136,9 +192,20 @@ export const SignUp = () => {
             className="space-y-6"
             onSubmit={(e) => {
               e.preventDefault();
-              navigate("/");
+              register();
             }}
           >
+            {/* --- ERROR MESSAGE BLOCK --- */}
+            {isError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-3 rounded-lg bg-error-container/20 border border-error/20 text-error text-sm font-medium"
+              >
+                {error instanceof Error ? error.message : "An unexpected error occurred"}
+              </motion.div>
+            )}
+
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-on-surface-variant ml-1" htmlFor="username">
                 Username
@@ -150,6 +217,8 @@ export const SignUp = () => {
                   id="username"
                   placeholder="pixel_creator"
                   type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
@@ -164,6 +233,8 @@ export const SignUp = () => {
                   id="email"
                   placeholder="name@example.com"
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </div>
             </div>
@@ -178,6 +249,8 @@ export const SignUp = () => {
                   id="password"
                   placeholder="••••••••"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors"
@@ -193,7 +266,7 @@ export const SignUp = () => {
                 className="w-full py-4 bg-primary-container text-on-primary font-bold rounded-lg shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
                 type="submit"
               >
-                Sign Up
+                {isPending ? "Signing Up..." : "Sign Up"}
                 <ArrowRight size={18} />
               </button>
             </div>

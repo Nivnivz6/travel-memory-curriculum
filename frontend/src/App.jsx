@@ -4,6 +4,7 @@ import { Gallery } from "./components/Gallery";
 import { Analytics } from "./components/Analytics";
 import { Login, SignUp } from "./components/Auth";
 import { AnimatePresence, motion } from "motion/react";
+import { AuthProvider } from "./context/AuthContext";
 
 function AppContent() {
   const location = useLocation();
@@ -41,8 +42,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
