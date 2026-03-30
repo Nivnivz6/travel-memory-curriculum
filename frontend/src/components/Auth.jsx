@@ -2,10 +2,42 @@ import React, { useState } from "react";
 import { LayoutGrid, User, Lock, Eye, EyeOff, ArrowRight, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
+import { useMutation } from "@tanstack/react-query";
+import { loginApi } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+
+  const loginMutation = useMutation({
+    mutationFn: (credentials) => loginApi(credentials),
+
+    onSuccess: (data) => {
+      const token = data.data.token;
+      const user = data.data.user;
+
+      localStorage.setItem("token", token);
+      login(user, token);
+      navigate("/");
+    },
+
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const credentials = {
+      username: e.target.username.value,
+      password: e.target.password.value
+    };
+
+    loginMutation.mutate(credentials);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-surface relative overflow-hidden">
@@ -49,6 +81,7 @@ export const Login = () => {
                   <input
                     className="w-full pl-10 pr-4 py-3 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-lg text-on-surface placeholder:text-outline transition-all duration-200 outline-none"
                     id="username"
+                    name="username"
                     placeholder="e.g. creative_pixel"
                     type="text"
                   />
@@ -67,6 +100,7 @@ export const Login = () => {
                   <input
                     className="w-full pl-10 pr-10 py-3 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-lg text-on-surface placeholder:text-outline transition-all duration-200 outline-none"
                     id="password"
+                    name="password"
                     placeholder="••••••••"
                     type={showPassword ? "text" : "password"}
                   />
@@ -89,11 +123,16 @@ export const Login = () => {
                   Keep me logged in
                 </label>
               </div>
+              {loginMutation.isError && (
+                <p className="text-red-500 text-sm">
+                  Login failed
+                </p>
+              )}
               <button
                 className="w-full primary-gradient text-on-primary font-headline font-bold py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all duration-200"
                 type="submit"
               >
-                Login
+                {loginMutation.isLoading ? "Loading..." : "Login"}
               </button>
             </form>
           </div>

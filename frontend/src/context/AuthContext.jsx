@@ -26,5 +26,28 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
     }, []);
 
+    useEffect(() => {
+        const storedToken = localStorage.getItem('token');
 
-}
+        if (storedToken) {
+            setToken(storedToken);
+        }
+
+        setIsLoading(false);
+    }, []);
+
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                token,
+                isAuthenticated,
+                isLoading,
+                login,
+                logout
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+};
