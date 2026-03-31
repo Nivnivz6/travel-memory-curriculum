@@ -3,7 +3,7 @@ import { LayoutGrid, User, Lock, Eye, EyeOff, ArrowRight, Mail } from "lucide-re
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
-import { loginApi } from "../api/client";
+import { loginApi, registerApi } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
@@ -153,6 +153,42 @@ export const Login = () => {
 export const SignUp = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+  const registerMutation = useMutation({
+
+    mutationFn: (data) => registerApi(data),
+
+    onSuccess: (res) => {
+      const token = res.data.token;
+      const user = res.data.user;
+
+      localStorage.setItem("token", token);
+
+      login(user, token);
+
+      navigate("/");
+    },
+
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const data = {
+      username: e.target.username.value,
+      email: e.target.email.value,
+      password: e.target.password.value
+    };
+    if (!data.username || !data.email || !data.password) {
+      alert("All fields are required");
+      return;
+    }
+
+    registerMutation.mutate(data);
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-surface relative overflow-hidden">
@@ -173,10 +209,11 @@ export const SignUp = () => {
         <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm transition-all duration-300">
           <form
             className="space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              navigate("/");
-            }}
+            onSubmit={handleSubmit}
+          // onSubmit={(e) => {
+          //   e.preventDefault();
+          //   navigate("/");
+          // }}
           >
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-on-surface-variant ml-1" htmlFor="username">
@@ -187,6 +224,7 @@ export const SignUp = () => {
                 <input
                   className="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/60 transition-all duration-200 outline-none"
                   id="username"
+                  name="username"
                   placeholder="pixel_creator"
                   type="text"
                 />
@@ -201,6 +239,7 @@ export const SignUp = () => {
                 <input
                   className="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/60 transition-all duration-200 outline-none"
                   id="email"
+                  name="email"
                   placeholder="name@example.com"
                   type="email"
                 />
@@ -215,6 +254,7 @@ export const SignUp = () => {
                 <input
                   className="w-full pl-12 pr-12 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/60 transition-all duration-200 outline-none"
                   id="password"
+                  name="password"
                   placeholder="••••••••"
                   type={showPassword ? "text" : "password"}
                 />
@@ -226,13 +266,19 @@ export const SignUp = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              {registerMutation.isError && (
+                <p style={{ color: "red" }}>
+                  Registration failed
+                </p>
+              )}
+
             </div>
             <div className="pt-2">
               <button
                 className="w-full py-4 bg-primary-container text-on-primary font-bold rounded-lg shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
                 type="submit"
               >
-                Sign Up
+                {registerMutation.isLoading ? "Loading..." : "Sign Up"}
                 <ArrowRight size={18} />
               </button>
             </div>
