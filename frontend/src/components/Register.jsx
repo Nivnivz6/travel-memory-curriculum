@@ -35,13 +35,16 @@ function Register({ setToken, setUser, toggleMode }) {
 
     try {
       const response = await axios.post(`${API_URL}/auth/register`, authForm);
-
+      console.log(response.data)
       const token = response.data.token
       const user = {
-        'id': response.data._id,
-        'username': response.data.username,
-        'email': response.data.email
+        'id': response.data.user._id,
+        'username': response.data.user.name,
+        'email': response.data.user.email
       }
+      console.log(token)
+            console.log(user)
+
 
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
@@ -52,6 +55,7 @@ function Register({ setToken, setUser, toggleMode }) {
 
     catch (error) {
       setError(error)
+
     }
 
     setIsLoading(false)

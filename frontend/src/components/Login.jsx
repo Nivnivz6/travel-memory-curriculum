@@ -33,13 +33,15 @@ function Login({ setToken, setUser, toggleMode }) {
     setIsLoading(true)
 
     try {
+      console.log("in login")
       const response = await axios.post(`${API_URL}/auth/login`, authForm);
+      console.log(response.data)
 
       const token = response.data.token
       const user = {
-        'id': response.data._id,
-        'username': response.data.username,
-        'email': response.data.email
+        'id': response.data.user._id,
+        'username': response.data.user.name,
+        'email': response.data.user.email
       }
 
       localStorage.setItem('token', token)
@@ -47,10 +49,12 @@ function Login({ setToken, setUser, toggleMode }) {
 
       setToken(token)
       setUser(user)
+
     }
 
     catch (error) {
       setError(error)
+
     }
 
     setIsLoading(false)
