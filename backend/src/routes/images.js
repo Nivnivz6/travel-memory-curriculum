@@ -1,10 +1,15 @@
-const express = require("express");
+import express, { response } from 'express';
+import {uploadImage} from '../controllers/imageController.js'
 
+const API_URL = 'http://localhost:3000/api';
+const imageRouter = express.Router();
 
-const router = express.Router();
+imageRouter.post('/upload', (req, res, next) => {
+    console.log("ggifgf")
 
-router.get('/images', (req, res, next) => {
-    
+    uploadImage(req, res).catch(next);
 });
 
-export default router;
+
+
+export default imageRouter;

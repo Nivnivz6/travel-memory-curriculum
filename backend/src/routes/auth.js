@@ -12,13 +12,11 @@ authRouter.post('/register', (req, res, next) => {
 
     register(req, res).catch(next);
 });
+
 authRouter.post('/login', (req, res, next) => {
     login(req, res).catch(next);
 });
 
-// // Protected example route
-authRouter.get('/me', protect, (req, res)=> {
-    res.json({ msg: 'You are authorized', user: req.user });
-});
+
 
 export default authRouter;

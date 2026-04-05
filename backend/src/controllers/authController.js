@@ -4,7 +4,6 @@ import User from "../models/user.js";
 import { signToken } from "../utils/jwt.js";
 
 const register = async (req, res) => {
-  console.log("im here");
 
   const email = req.body.email;
   const name = req.body.username;

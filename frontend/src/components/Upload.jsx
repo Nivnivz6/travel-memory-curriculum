@@ -31,6 +31,8 @@ function Upload({ images, setImages, logout, token }) {
     setIsLoading(true);
     setError(null);
     setSuccess('');
+        console.log(file)
+
 
     // 3. Send a POST request to `/api/images/upload`.
     // 4. Important: The response contains the saved image object. Prepend it directly 
