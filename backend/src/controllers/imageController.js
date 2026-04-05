@@ -7,5 +7,13 @@ const uploadImage = async(req,res)=>{
 
     console.log(req)
 
+
 }
-export { uploadImage};
+
+const getImage = async(req,res)=>{
+
+    console.log("hi")
+
+
+}
+export { getImage, uploadImage};
