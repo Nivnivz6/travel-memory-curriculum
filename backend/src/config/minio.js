@@ -1,9 +1,9 @@
-const Minio = require('minio')
+import * as Minio from 'minio'
 import dotenv from 'dotenv'; 
 
 dotenv.config();
 
-const minio = new Client({
+const minio = new Minio.Client({
   endPoint: process.env.MINIO_ENDPOINT,       
   port: parseInt(process.env.MINIO_PORT),     
   useSSL: process.env.MINIO_USE_SSL === 'true', 

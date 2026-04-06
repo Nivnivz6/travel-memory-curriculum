@@ -3,17 +3,23 @@ import Image from "../models/image.js";
 
 import { signToken } from "../utils/jwt.js";
 
-const uploadImage = async(req,res)=>{
-
-    console.log(req)
+import minio from "../config/minio.js";
 
 
-}
 
-const getImage = async(req,res)=>{
+const uploadImage = async (req, res) => {
+  console.log("hello");
 
-    console.log("hi")
+  minio.fPutObject('images', req.file.originalname, req.file.path, (err, etag) => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log(`File uploaded successfully. ETag: ${etag}`);
+  });
 
+};
 
-}
-export { getImage, uploadImage};
+const getImage = async (req, res) => {
+  console.log("hi");
+};
+export { getImage, uploadImage };

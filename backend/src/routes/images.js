@@ -1,14 +1,14 @@
 import express, { response } from 'express';
 import {uploadImage, getImage} from '../controllers/imageController.js'
-import multer from "multer";
+import multer from 'multer'
+const upload = multer({ dest: 'uploads/' });
 
 const API_URL = 'http://localhost:3000/api';
 const imageRouter = express.Router();
-// const upload = multer({ dest: "uploads/" });
 
-imageRouter.post('/upload', (req, res, next) => {
-//   upload.single("image"),
-
+imageRouter.post('/upload',upload.single("image"),
+ (req, res, next) => {
+  
     uploadImage(req, res).catch(next);
 });
 imageRouter.get('/', (req, res, next) => {
