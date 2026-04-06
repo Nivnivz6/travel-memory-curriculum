@@ -8,7 +8,7 @@ const imageSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    imageName: {
+    image: {
       type: String,
       required: true,
     },
