@@ -20,9 +20,7 @@ const uploadImage = async (req, res) => {
   console.log(image);
   try {
     await image.save();
-    return res
-      .status(201)
-      .json({ msg: "saved image successfully"});
+    return res.status(201).json({ msg: "saved image successfully" });
   } catch (err) {
     console.log(err);
     return res.status(400).json({ msg: err });
@@ -30,6 +28,11 @@ const uploadImage = async (req, res) => {
 };
 
 const getImage = async (req, res) => {
-  console.log("hi");
+  console.log("hijnjjnjn");
+  let images = await Image.find({ userID: req.user });
+  const urls = await Promise.all(
+    images.map((img) => minio.presignedGetObject("images", img.image)),
+  );
+  res.json({ images: urls });
 };
 export { getImage, uploadImage };

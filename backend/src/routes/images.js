@@ -12,7 +12,7 @@ imageRouter.post('/upload',upload.single("image"), protect,
   
     uploadImage(req, res).catch(next);
 });
-imageRouter.get('/', (req, res, next) => {
+imageRouter.get('', (req, res, next) => {
 
     getImage(req, res).catch(next);
 });
