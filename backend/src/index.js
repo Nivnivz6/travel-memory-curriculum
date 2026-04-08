@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const minioClient = require('./config/minio');
 const authRoutes = require('./routes/auth');
 const imagesRoutes = require('./routes/images');
+const analyticsRoutes = require('./routes/analytics');
 
 // Load environment variables
 dotenv.config();
@@ -34,3 +35,4 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imagesRoutes);
+app.use('/api/analytics', analyticsRoutes);
