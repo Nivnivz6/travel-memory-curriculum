@@ -6,19 +6,19 @@ dotenv.config();
 
 const uploadImage = async (req, res, next) => {
     try {
-        const name = req.file.originalname
+        const filename = req.file.originalname
         const size = req.file.size
         const bucket = process.env.MINIO_BUCKET
 
         const image = await Image.create({
             userId: req.user.id,
-            name: name,
+            filename: filename,
             status: 'pending',
-            s3Key: `${bucket}/${name}`,
+            s3Key: `${bucket}/${filename}`,
             size: size
         });
 
-        await minioClient.putObject(bucket, name, req.file.buffer, size);
+        await minioClient.putObject(bucket, filename, req.file.buffer, size);
 
         return res.status(201).json(image);
     }
@@ -30,14 +30,14 @@ const uploadImage = async (req, res, next) => {
 
 const getImages = async (req, res, next) => {
     try {
-        const name = req.query.name;
+        const name = req.query.filename;
         const status = req.query.status;
         const minSize = req.query.minSize;
         const maxSize = req.query.maxSize;
         const fromDate = req.query.fromDate;
         const toDate = req.query.toDate;
 
-        let filter = {}
+        let filter = { userId: req.user.id };
 
         if (name) {
             filter['name'] = name;

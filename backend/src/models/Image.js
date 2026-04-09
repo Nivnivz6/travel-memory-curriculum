@@ -6,7 +6,7 @@ const imageSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    name: {
+    filename: {
         type: String,
         required: true
     },
