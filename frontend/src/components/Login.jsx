@@ -33,9 +33,9 @@ function Login({ setToken, setUser, toggleMode }) {
     setIsLoading(true)
 
     try {
-      console.log("in login")
       const response = await axios.post(`${API_URL}/auth/login`, authForm);
       console.log(response.data)
+      console.log("hi")
 
       const token = response.data.token
       const user = {
