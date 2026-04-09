@@ -15,6 +15,7 @@ authRouter.post('/register', (req, res, next) => {
 
 authRouter.post('/login', (req, res, next) => {
     console.log("here")
+
     login(req, res).catch(next);
 
 });
