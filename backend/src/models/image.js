@@ -8,13 +8,19 @@ const imageSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    name: {
+    s3Name: {
       type: String,
       required: true,
     }, 
-    url: {
+    filename:{
       type: String,
       required: true,
+    },
+    s3Url: {
+      type: String,
+      required: true,
+      default: "",
+
     },
     status: {
       type: String,
