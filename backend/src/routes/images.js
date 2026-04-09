@@ -12,9 +12,11 @@ imageRouter.post('/upload',upload.single("image"), protect,
   
     uploadImage(req, res).catch(next);
 });
-imageRouter.get('', (req, res, next) => {
+imageRouter.get('', protect, (req, res, next) => {
+    console.log("jjj")
 
     getImage(req, res).catch(next);
+    console.log("k")
 });
 
 

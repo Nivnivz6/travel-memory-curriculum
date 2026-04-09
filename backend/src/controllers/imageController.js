@@ -9,14 +9,15 @@ const uploadImage = async (req, res) => {
   console.log("hello");
 
   const imageName = `image/${req.user}/${Date.now()}/${req.file.originalname}`;
-
-  minio.fPutObject("images", imageName, req.file.path, (err) => {
+const imagePath =  req.file.path
+  const ans = minio.fPutObject("images", imageName, imagePath, (err) => {
     if (err) {
       return console.log(err);
     }
     console.log(`File uploaded successfully.`);
   });
-  const image = new Image({ userID: req.user, image: imageName });
+
+  const image = new Image({ userID: req.user, name: imageName, url: imagePath });
   console.log(image);
   try {
     await image.save();
@@ -29,10 +30,17 @@ const uploadImage = async (req, res) => {
 
 const getImage = async (req, res) => {
   console.log("hijnjjnjn");
-  let images = await Image.find({ userID: req.user });
+  const ID = req.user
+  let images = await Image.find({ userID: ID });
+  console.log(images)
   const urls = await Promise.all(
-    images.map((img) => minio.presignedGetObject("images", img.image)),
+    images.map((img) => minio.presignedGetObject("images",img.name)),
+      // images.map((img) => minio.fGetObject("images", img.name )),
+      // images.map((img) =>  minio.presignedUrl("GET","images",  "img.name",  6000 )),
+
+
   );
-  res.json({ images: urls });
+  // res.send({ images: urls });
+  return res.json(urls)
 };
 export { getImage, uploadImage };

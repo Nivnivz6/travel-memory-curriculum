@@ -43,6 +43,7 @@ function App() {
           Authorization: `Bearer ${token}`
         }
       });
+      console.log(response.data)
       setImages(response.data)
     }
 

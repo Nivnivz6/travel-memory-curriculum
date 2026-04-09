@@ -8,7 +8,11 @@ const imageSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    image: {
+    name: {
+      type: String,
+      required: true,
+    }, 
+    url: {
       type: String,
       required: true,
     },
