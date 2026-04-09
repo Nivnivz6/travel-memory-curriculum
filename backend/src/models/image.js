@@ -11,8 +11,8 @@ const imageSchema = mongoose.Schema(
     s3Name: {
       type: String,
       required: true,
-    }, 
-    filename:{
+    },
+    filename: {
       type: String,
       required: true,
     },
@@ -20,13 +20,20 @@ const imageSchema = mongoose.Schema(
       type: String,
       required: true,
       default: "",
-
+    },
+    size: {
+      type: Number,
+      required: true,
     },
     status: {
       type: String,
       required: true,
       enum: ["pending", "completed"],
       default: "pending",
+    },
+    uploadDate: {
+      type: Date,
+      default: Date.now(),
     },
   },
   { timestamps: true },

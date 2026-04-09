@@ -9,20 +9,22 @@ const uploadImage = async (req, res) => {
   console.log("hello");
 
   const imgS3Name = `image/${req.user}/${Date.now()}/${req.file.originalname}`;
+  console.log(req.file);
   const imagePath = req.file.buffer;
-  const ans = minio.putObject("images", imgS3Name, imagePath, (err) => {
+
+  minio.putObject("images", imgS3Name, imagePath, (err) => {
     if (err) {
       return console.log(err);
     }
     console.log(`File uploaded successfully.`);
   });
   const s3 = await minio.presignedGetObject("images", imgS3Name);
-  console.log({ s3 });
   const image = new Image({
     userID: req.user,
     s3Name: imgS3Name,
     s3Url: s3,
     filename: req.file.originalname,
+    size: req.file.size,
   });
   console.log(image);
   try {
@@ -47,13 +49,20 @@ const getImage = async (req, res) => {
 
   const filter = Object.keys(req.query)[0];
   const sort = Object.values(req.query)[0];
+  console.log(new Date(sort));
 
   if (filter === "name") {
     images = images.filter((item) => item.filename === sort);
   } else if (filter === "status") {
     images = images.filter((item) => item.status === sort);
+  } else if (filter === "minSize") {
+    images = images.filter((item) => item.size >= Number(sort));
+  } else if (filter === "maxSize") {
+    images = images.filter((item) => item.size <= Number(sort));
+  } else if (filter === "fromDate") {
+    console.log("in")
+    images = images.filter((item) => item.uploadDate >= new Date(sort));
   }
-
   return res.json(images);
 };
 

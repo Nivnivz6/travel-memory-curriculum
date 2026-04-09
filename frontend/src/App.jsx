@@ -43,7 +43,10 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
         // ,params: { name: 'lion pic.jpg' }
-        params: { status: "pending" },
+        // params: { status: "pending" },
+        // params: { minSize: "100" },
+        // params: { maxSize: "100000000" },
+        params: { fromDate: "2026-04-09T20:32:32.210Z" },
       });
       console.log(response.data);
       setImages(response.data);
