@@ -1,24 +1,28 @@
+const crypto = require('crypto');
 const Image = require('../models/Image')
 const minioClient = require('../config/minio');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
+const randomImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+
 const uploadImage = async (req, res, next) => {
     try {
         const filename = req.file.originalname
         const size = req.file.size
         const bucket = process.env.MINIO_BUCKET
+        const s3Key = randomImageName();
 
         const image = await Image.create({
             userId: req.user.id,
             filename: filename,
             status: 'pending',
-            s3Key: `${bucket}/${filename}`,
+            s3Key: s3Key, 
             size: size
         });
 
-        await minioClient.putObject(bucket, filename, req.file.buffer, size);
+        await minioClient.putObject(bucket, s3Key, req.file.buffer, size);
 
         return res.status(201).json(image);
     }
@@ -72,6 +76,11 @@ const getImages = async (req, res, next) => {
         }
 
         const images = await Image.find(filter);
+
+        for (const image of images) {
+            image.s3Url = await minioClient.presignedGetObject(process.env.MINIO_BUCKET, image.s3Key);
+        }
+
         return res.status(200).json(images);
     }
 

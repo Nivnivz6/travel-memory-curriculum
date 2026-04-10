@@ -18,6 +18,9 @@ const imageSchema = new mongoose.Schema({
         type: String, 
         required: true
     }, 
+    s3Url: {
+        type: String
+    }, 
     size: {
         type: Number,
         required: true
