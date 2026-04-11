@@ -60,9 +60,11 @@ const getImage = async (req, res) => {
   } else if (filter === "maxSize") {
     images = images.filter((item) => item.size <= Number(sort));
   } else if (filter === "fromDate") {
-    console.log("in")
     images = images.filter((item) => item.uploadDate >= new Date(sort));
+  } else if (filter === "toDate") {
+    images = images.filter((item) => item.uploadDate < new Date(sort));
   }
+
   return res.json(images);
 };
 
