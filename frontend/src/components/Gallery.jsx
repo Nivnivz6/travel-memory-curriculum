@@ -1,11 +1,39 @@
-import React, { useState } from 'react';
-import { Upload, Search, Calendar, Trash2, Plus, ChevronDown } from 'lucide-react';
-import { MOCK_IMAGES } from '../constants';
+import React, { useState, useEffect } from 'react'; import { Upload, Search, Calendar, Trash2, Plus, ChevronDown } from 'lucide-react';
+// import { MOCK_IMAGES } from '../constants';
+import { useImages } from '../hooks/useImages';
 import { ImageCard } from './ImageCard';
 import { motion } from 'motion/react';
+import { useDeleteImages } from '../hooks/useDeleteImages';
+import { useUpload } from '../hooks/useUpload';
 
 export const Gallery = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [status, setStatus] = useState('');
+  // Debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch images
+  const { data, isLoading, error } = useImages({
+    name: debouncedSearch,
+    status
+  });
+
+  // Delete
+  const deleteMutation = useDeleteImages();
+
+  // Upload
+  const { upload, isUploading } = useUpload();
+
+  // Loading / Error
+  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (error) return <p className="text-center mt-10 text-red-500">Error loading images</p>;
 
   return (
     <main className="pt-24 pb-20 px-6 max-w-7xl mx-auto space-y-12">
@@ -21,8 +49,20 @@ export const Gallery = () => {
           <p className="text-on-surface-variant font-body mb-6">
             Support for RAW, PNG, JPG up to 50MB
           </p>
-          <button className="primary-gradient text-on-primary px-8 py-3 rounded-lg font-semibold shadow-lg active:scale-95 transition-all">
-            Upload Image
+          <button
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  upload({ file, name: file.name });
+                }
+              };
+              input.click();
+            }}
+            className="primary-gradient text-on-primary px-8 py-3 rounded-lg font-semibold shadow-lg active:scale-95 transition-all">
+            {isUploading ? "Uploading..." : "Upload Image"}
           </button>
         </div>
       </section>
@@ -32,16 +72,18 @@ export const Gallery = () => {
         <div className="flex flex-wrap items-center gap-3 flex-1">
           <div className="flex items-center bg-surface-container px-4 py-2 rounded-lg border border-transparent focus-within:border-primary/30 transition-all w-full md:w-auto min-w-[280px]">
             <Search className="text-outline w-5 h-5 mr-2" />
-            <input 
-              className="bg-transparent border-none focus:outline-none text-sm font-body w-full" 
-              placeholder="Search gallery..." 
+            <input
+              className="bg-transparent border-none focus:outline-none text-sm font-body w-full"
+              placeholder="Search gallery..."
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="relative">
-            <select className="appearance-none bg-surface-container text-sm font-medium px-4 py-2 pr-10 rounded-lg border-none focus:ring-2 focus:ring-primary/20 text-on-surface-variant cursor-pointer outline-none">
+            <select
+              onChange={(e) => setStatus(e.target.value)}
+              className="appearance-none bg-surface-container text-sm font-medium px-4 py-2 pr-10 rounded-lg border-none focus:ring-2 focus:ring-primary/20 text-on-surface-variant cursor-pointer outline-none">
               <option>All Status</option>
               <option>Pending</option>
               <option>Ready</option>
@@ -53,7 +95,16 @@ export const Gallery = () => {
             <span className="text-sm font-medium text-on-surface-variant">Date Range</span>
           </div>
         </div>
-        <button className="text-error font-semibold text-sm flex items-center gap-2 px-4 py-2 hover:bg-error-container/30 rounded-lg transition-colors active:scale-95">
+        <button
+          onClick={() => {
+            if (!data?.data?.length) return;
+
+            if (confirm("Delete all images?")) {
+              const ids = data.data.map(img => img._id);
+              deleteMutation.mutate(ids);
+            }
+          }}
+          className="text-error font-semibold text-sm flex items-center gap-2 px-4 py-2 hover:bg-error-container/30 rounded-lg transition-colors active:scale-95">
           <Trash2 className="w-4 h-4" />
           Delete All
         </button>
@@ -61,7 +112,7 @@ export const Gallery = () => {
 
       {/* Image Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {MOCK_IMAGES.filter(img => img.filename.toLowerCase().includes(searchQuery.toLowerCase())).map((image) => (
+        {data?.data?.map((image) => (
           <ImageCard key={image.id} image={image} />
         ))}
       </section>
@@ -70,14 +121,26 @@ export const Gallery = () => {
       <footer className="flex items-center justify-between pt-12 border-t border-outline-variant/20">
         <div className="flex items-center gap-4">
           <p className="text-sm font-body text-on-surface-variant">
-            Showing {MOCK_IMAGES.length} of 1,284 images
+            Showing {data?.data?.length || 0} of 1,284 images
           </p>
         </div>
       </footer>
 
       {/* Floating Action Button for Upload (Mobile) */}
       <div className="fixed bottom-8 right-8 z-40 lg:hidden">
-        <button className="w-14 h-14 rounded-full primary-gradient text-on-primary shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+        <button
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                upload({ file, name: file.name });
+              }
+            };
+            input.click();
+          }}
+          className="w-14 h-14 rounded-full primary-gradient text-on-primary shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
           <Plus className="w-6 h-6" />
         </button>
       </div>
