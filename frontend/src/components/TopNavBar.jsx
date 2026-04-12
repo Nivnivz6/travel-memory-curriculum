@@ -1,8 +1,10 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export const TopNavBar = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <nav className="fixed top-0 w-full flex justify-between items-center px-6 h-16 max-w-full mx-auto bg-white/80 backdrop-blur-xl z-50 shadow-sm font-headline tracking-tight">
@@ -10,6 +12,7 @@ export const TopNavBar = () => {
         <span className="text-xl font-bold text-slate-900 cursor-pointer" onClick={() => navigate("/")}>
           Travel Memory
         </span>
+        {isAuthenticated && (
         <div className="hidden md:flex items-center gap-6">
           <NavLink
             to="/"
@@ -32,11 +35,24 @@ export const TopNavBar = () => {
             Analytics
           </NavLink>
         </div>
+        )}
       </div>
       <div className="flex items-center gap-4">
-        <button onClick={() => navigate("/login")} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
-          Logout (Alex)
+        {isAuthenticated ? (
+        <button onClick={() => {
+              logout();    
+              navigate("/login");
+            }} className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
+          Logout ({user?.username})
         </button>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            Login
+          </button>
+        )}
       </div>
     </nav>
   );
