@@ -11,7 +11,7 @@ To understand why we use Redis, you must understand your computer's "Storage Hie
 - **Disk (HDD/SSD)**: This is where MongoDB lives. It stores data on physical/electronic platters. It is **persistent** (permanent) but **slow** because it takes time to find and read data. Access time is usually measured in **milliseconds (ms)**.
 - **RAM (Memory)**: This is where **Redis** lives. It is **volatile** (data is lost if the power goes out) but **extremely fast**. Access time is measured in **nanoseconds (ns)**.
 
-> [!TIP]
+> TIP:
 > Reading from Redis is often **50x to 100x faster** than reading from MongoDB!
 
 ### 2. What is Redis?
@@ -66,26 +66,15 @@ This gives you a visual interface to:
 
 ## 🛠️ Your Mission: Implementation Challenge
 
-### Step 1: Redis "Read-Aside"
-Using the **official `redis` npm package**, implement the Read-Aside pattern in `backend/src/controllers/imageController.js`:
-- Use `JSON.GET` to retrieve data directly as objects
-- Use `JSON.SET` to store data directly without serialization
-- Open RedisInsight at `http://localhost:8001` to visualize your cache!
+### Step 1: Add Redis
+Using the official `redis` npm package, add Redis to the backend and implement a **Read-Aside cache** in your backend. The goal is to cache the image list so repeated reads can be served from Redis instead of hitting MongoDB every time.
+
+### Step 2: Invalidate the Relevant Cache on New Upload
+When a new image is uploaded, invalidate the relevant cache entry so users do not receive stale data. This means the next read should miss the cache, fetch fresh data from MongoDB, and then repopulate Redis with the updated result.
+>   Refer to the `Redis JSON` documentation to ensure you're using the most appropriate command for your use case
 
 ---
 
-## 🚀 Pro-Tip: Cache Invalidation
-We have already provided the "Invalidation" code in `uploadImage` and `worker.js`. 
-**Why?** Because if a user uploads a new image, the "old" list of images stored in Redis is now **STALE** (out of date). By deleting the key in Redis, we force the next request to go to MongoDB and get the fresh list!
-
-Launch your stack and start the challenge:
-```bash
-docker compose up -d redis minio
-cd backend
-npm install redis
-npm test tests/image.test.js
-```
-
-Then open RedisInsight to explore your cache:
-```
-http://localhost:8001
+## 🔗 Resources & References
+For RedisJSON usage and command examples, read the official Redis documentation:
+https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/json/commands/ 
