@@ -4,7 +4,7 @@ Welcome to Phase 4. This is where we stop just "making it work" and start "makin
 
 ---
 
-## 📚 Lesson 1: The Fast Path (Redis & In-Memory Caching)
+## 📚 Lesson: The Fast Path (Redis & In-Memory Caching)
 
 ### 1. The Physical Reality: RAM vs. Disk
 To understand why we use Redis, you must understand your computer's "Storage Hierarchy":
@@ -24,46 +24,53 @@ This is the pattern you will implement today. It involves three distinct steps:
 2. **Retrieve**: If not (a "Cache Miss"), go to MongoDB.
 3. **Populate**: Save the MongoDB result into Redis so the *next* request is a "Hit."
 
-### 4. Serialization (JSON stringify/parse)
-Redis only understands bytes and strings. It doesn't know what a "JavaScript Object" is.
-- **Saving**: You must `JSON.stringify()` your data before `SET`-ing it in Redis.
-- **Reading**: You must `JSON.parse()` the string back into an object after `GET`-ing it.
+### 4. Redis JSON
+Modern Redis supports native JSON storage via the **Redis Stack** image. This means:
+- **No `JSON.stringify()`** before saving
+- **No `JSON.parse()`** after reading
+- Just store and retrieve JavaScript objects directly!
 
----
+### 🐳 Docker Image: Redis Stack
+We use `redis/redis-stack` which includes:
+- **Redis 7** - The core database
+- **RedisJSON** - Native JSON support (no manual serialization)
+- **RedisInsight** - Built-in GUI for exploring your data
 
-## 📚 Lesson 2: The Storage Path (Object Storage / S3)
+Update your `docker-compose.yml` to use:
+```yaml
+redis:
+  image: redis/redis-stack:latest
+  container_name: learning-redis
+  ports:
+    - '6379:6379'
+    - '8001:8001'  # RedisInsight UI
+```
 
-### 1. The "Blob" Problem
-As an instructor, I've seen many juniors try to store actual image files inside MongoDB. **Don't do it.** 
-Binary data (Blobs) makes a database:
-- **Huge**: Backups take hours instead of seconds.
-- **Slow**: MongoDB has to load huge chunks of data into its memory just to find a simple record.
-- **Fragile**: Single record limits (16MB in Mongo) can break your app.
+### 📦 NPM Package
+Install the official Redis client:
+```bash
+npm install redis
+```
 
-### 2. The Solution: Object Storage (MinIO/S3)
-**Object Storage** is a specialized file system for the cloud. It doesn't use "folders" in the traditional sense; it uses **Buckets** and **Keys**.
-- **Bucket**: Your top-level container (e.g., `learning-uploads`).
-- **Key**: The unique path/name of the file (e.g., `uploads/1700-landscape.jpg`).
-- **Separation of Concerns**: We store the **file bytes** in MinIO and only store the **URL/Key** in MongoDB. This keeps MongoDB fast and lean.
-
-### 3. Content-Types
-When you upload to S3, you must tell it the **ContentType** (e.g., `image/jpeg`). If you don't, the browser won't know how to render the file when a user visits the URL, and it might just download the file instead of showing it!
+### 🔍 Using RedisInsight
+Once your stack is running, open your browser to:
+```
+http://localhost:8001
+```
+This gives you a visual interface to:
+- Browse keys
+- View/ edit JSON values
+- Monitor cache performance
 
 ---
 
 ## 🛠️ Your Mission: Implementation Challenge
 
 ### Step 1: Redis "Read-Aside"
-Open `backend/src/controllers/imageController.js`. Find the `getImages` function. 
-Implement the logic to check Redis first. If it's a "Miss," fetch from the DB and populate the cache.
-
-### Step 2: Structured S3 Practice
-Open `backend/src/services/s3Service.js`. 
-We have broken the `uploadFile` function into several logical checkpoints for you:
-1. **Generation**: Create a unique key using a timestamp.
-2. **Configuration**: Construct the `params` object required by the AWS SDK.
-3. **Execution**: Fire the `.upload()` and wait for the response.
-4. **Integration**: Return the data needed by the controller.
+Using the **official `redis` npm package**, implement the Read-Aside pattern in `backend/src/controllers/imageController.js`:
+- Use `JSON.GET` to retrieve data directly as objects
+- Use `JSON.SET` to store data directly without serialization
+- Open RedisInsight at `http://localhost:8001` to visualize your cache!
 
 ---
 
@@ -75,5 +82,10 @@ Launch your stack and start the challenge:
 ```bash
 docker compose up -d redis minio
 cd backend
+npm install redis
 npm test tests/image.test.js
 ```
+
+Then open RedisInsight to explore your cache:
+```
+http://localhost:8001
